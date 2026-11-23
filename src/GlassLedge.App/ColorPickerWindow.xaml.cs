@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -51,6 +52,10 @@ public partial class ColorPickerWindow : Window
             swatch.Click += (_, _) => SetColor(0xFF000000 | rgb, keepAlpha: true, raiseChanged: true);
             PresetPanel.Children.Add(swatch);
         }
+
+        // A screen reader can set the two sliders directly; the square is keyboard-only (arrow keys) or typed as hex.
+        HueArea.ValueSetter = value => SetFromBar(HueArea, value);
+        AlphaArea.ValueSetter = value => SetFromBar(AlphaArea, value);
 
         Loaded += (_, _) => UpdateVisuals();
     }
@@ -124,11 +129,20 @@ public partial class ColorPickerWindow : Window
         Place(AlphaThumb, _alpha * AlphaArea.ActualWidth, null);
 
         OpacityText.Text = $"{Math.Round(_alpha * 100)}%";
+
+        SvArea.SetAutomationValue(
+            _saturation,
+            $"saturation {Percent(_saturation)} percent, brightness {Percent(_value)} percent");
+        HueArea.SetAutomationValue(_hue, PickerArea.Spoken(_hue, "degrees"));
+        AlphaArea.SetAutomationValue(_alpha * 100, PickerArea.Spoken(_alpha * 100, "percent"));
         if (!HexBox.IsKeyboardFocused)
         {
             HexBox.Text = ColorMath.ToRgbHex(argb);
         }
     }
+
+    private static string Percent(double fraction) =>
+        Math.Round(fraction * 100).ToString(CultureInfo.CurrentCulture);
 
     private static void Place(FrameworkElement thumb, double centerX, double? centerY)
     {
@@ -144,6 +158,7 @@ public partial class ColorPickerWindow : Window
     private void Area_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         var area = (FrameworkElement)sender;
+        area.Focus(); // so the arrow keys continue from where the mouse left off
         area.CaptureMouse();
         PickAt(area, e.GetPosition(area));
         e.Handled = true;
@@ -184,6 +199,107 @@ public partial class ColorPickerWindow : Window
 
         UpdateVisuals();
         OnColorChanged();
+    }
+
+    // ---- Keyboard: arrow keys on the square and the two bars ----
+
+    private void Area_KeyDown(object sender, KeyEventArgs e)
+    {
+        var area = (PickerArea)sender;
+        var bigStep = (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
+
+        var changed = area == SvArea ? NudgeSquare(e.Key, bigStep) : NudgeBar(area, e.Key, bigStep);
+        if (!changed)
+        {
+            return;
+        }
+
+        e.Handled = true; // the arrow keys must not also move focus to a neighbouring control
+        UpdateVisuals();
+        OnColorChanged();
+    }
+
+    /// <summary>Left/Right change saturation, Up/Down and Page Up/Down brightness; Home/End jump saturation to either end.</summary>
+    private bool NudgeSquare(Key key, bool bigStep)
+    {
+        var step = bigStep ? 0.10 : 0.01;
+        switch (key)
+        {
+            case Key.Left:
+                _saturation = Math.Clamp(_saturation - step, 0, 1);
+                return true;
+            case Key.Right:
+                _saturation = Math.Clamp(_saturation + step, 0, 1);
+                return true;
+            case Key.Up:
+                _value = Math.Clamp(_value + step, 0, 1);
+                return true;
+            case Key.Down:
+                _value = Math.Clamp(_value - step, 0, 1);
+                return true;
+            case Key.PageUp:
+                _value = Math.Clamp(_value + 0.10, 0, 1);
+                return true;
+            case Key.PageDown:
+                _value = Math.Clamp(_value - 0.10, 0, 1);
+                return true;
+            case Key.Home:
+                _saturation = 0;
+                return true;
+            case Key.End:
+                _saturation = 1;
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /// <summary>The hue and opacity bars: arrows step, Shift or Page Up/Down take a big step, Home/End jump to either end.</summary>
+    private bool NudgeBar(PickerArea area, Key key, bool bigStep)
+    {
+        var current = area == HueArea ? _hue : _alpha * 100;
+        var step = bigStep ? area.LargeChange : area.SmallChange;
+
+        double? next = key switch
+        {
+            Key.Left or Key.Down => current - step,
+            Key.Right or Key.Up => current + step,
+            Key.PageDown => current - area.LargeChange,
+            Key.PageUp => current + area.LargeChange,
+            Key.Home => area.Minimum,
+            Key.End => area.Maximum,
+            _ => null,
+        };
+
+        if (next is not { } value)
+        {
+            return false;
+        }
+
+        SetBar(area, value);
+        return true;
+    }
+
+    private void SetBar(PickerArea area, double value)
+    {
+        var clamped = Math.Clamp(value, area.Minimum, area.Maximum);
+        if (area == HueArea)
+        {
+            _hue = clamped;
+        }
+        else
+        {
+            _alpha = clamped / 100;
+        }
+    }
+
+    /// <summary>A screen reader set a slider's value.</summary>
+    private bool SetFromBar(PickerArea area, double value)
+    {
+        SetBar(area, value);
+        UpdateVisuals();
+        OnColorChanged();
+        return true;
     }
 
     // ---- Hex entry ----

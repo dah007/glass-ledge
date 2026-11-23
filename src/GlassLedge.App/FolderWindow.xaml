@@ -9,6 +9,7 @@
         ResizeMode="NoResize"
         ShowInTaskbar="False"
         ShowActivated="False"
+        PreviewKeyDown="Window_PreviewKeyDown"
         FontFamily="Segoe UI Variable Text, Segoe UI">
 
     <Window.Resources>
@@ -31,6 +32,38 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Keyboard focus ring for the whole card (shown when there are no tiles to focus). -->
+        <Style x:Key="CardFocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border CornerRadius="22" BorderThickness="3" IsHitTestVisible="False"
+                                BorderBrush="{DynamicResource WidgetAccentBrush}" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- A tile is a real button, so keyboard and screen-reader users can focus and open it. It has no
+             chrome of its own; the focus ring is drawn on the tile square (see the template below). The
+             mouse never reaches it: the card handles clicks first (see Card_PreviewMouseLeftButtonDown). -->
+        <Style x:Key="TileButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <!-- Transparent background so the whole cell is hit-testable. -->
+                        <Border Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -40,7 +73,10 @@
             BorderBrush="{DynamicResource WidgetBorderBrush}"
             BorderThickness="2"
             Padding="13,11,13,11"
-            MouseLeftButtonDown="Card_MouseLeftButtonDown"
+            Focusable="True"
+            KeyboardNavigation.IsTabStop="False"
+            FocusVisualStyle="{StaticResource CardFocusVisual}"
+            PreviewMouseLeftButtonDown="Card_PreviewMouseLeftButtonDown"
             MouseMove="Card_MouseMove"
             MouseLeftButtonUp="Card_MouseLeftButtonUp">
 
@@ -48,12 +84,12 @@
             <ContextMenu Opened="ContextMenu_Opened"
                          Background="{DynamicResource BrandMenuBrush}"
                          BorderBrush="{DynamicResource BrandHairlineBrush}">
-                <MenuItem Header="Refresh" Click="Refresh_Click" />
+                <MenuItem Header="Refresh" InputGestureText="F5" Click="Refresh_Click" />
                 <MenuItem x:Name="CollapseItem" Header="Collapse" Click="ToggleCollapsed_Click" />
                 <Separator />
                 <MenuItem Header="Open in File Explorer" Click="OpenInExplorer_Click" />
                 <MenuItem Header="Change folder…" Click="ChangeFolder_Click" />
-                <MenuItem Header="Rename" Click="Rename_Click" />
+                <MenuItem Header="Rename" InputGestureText="F2" Click="Rename_Click" />
                 <MenuItem Header="Color…" Click="Color_Click" />
                 <MenuItem x:Name="GlossItem" Header="Glossy" IsCheckable="True" Click="Gloss_Click" />
                 <!-- The empty icon reserves the same left column the check marks use, so "Size" lines up with its neighbours. -->
@@ -113,12 +149,17 @@
                              Style="{StaticResource TitleEditorStyle}"
                              Visibility="Collapsed"
                              Margin="-3,0,8,0"
+                             AutomationProperties.Name="Widget name"
                              KeyDown="NameEditor_KeyDown"
                              LostKeyboardFocus="NameEditor_LostKeyboardFocus" />
                 </Grid>
             </DockPanel>
 
-            <ItemsControl x:Name="Tiles" Focusable="False">
+            <!-- Arrow keys move between tiles; Tab enters the group once and the next Tab leaves it. -->
+            <ItemsControl x:Name="Tiles" Focusable="False"
+                          AutomationProperties.Name="Folder contents"
+                          KeyboardNavigation.DirectionalNavigation="Cycle"
+                          KeyboardNavigation.TabNavigation="Once">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <UniformGrid Columns="{Binding GridColumns, RelativeSource={RelativeSource AncestorType=Window}}"
@@ -128,14 +169,17 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type app:TileViewModel}">
-                        <!-- Transparent background so the whole cell is hit-testable for double-click. -->
-                        <Grid Background="Transparent" ToolTip="{Binding TargetPath}">
+                        <Button Style="{StaticResource TileButtonStyle}"
+                                Click="Tile_Click"
+                                ToolTip="{Binding TargetPath}"
+                                AutomationProperties.Name="{Binding SpokenName}">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Border Width="40" Height="40" CornerRadius="10" BorderThickness="1" HorizontalAlignment="Center">
+                                <Border Width="40" Height="40" CornerRadius="10" HorizontalAlignment="Center">
                                     <Border.Style>
                                         <Style TargetType="Border">
                                             <Setter Property="Background" Value="{DynamicResource WidgetTileBrush}" />
                                             <Setter Property="BorderBrush" Value="Transparent" />
+                                            <Setter Property="BorderThickness" Value="1" />
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsGlossy, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
                                                     <Setter Property="BorderBrush" Value="{DynamicResource WidgetTileEdgeBrush}" />
@@ -145,6 +189,11 @@
                                                     <Setter Property="Background" Value="{DynamicResource WidgetTileHoverBrush}" />
                                                     <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}" />
                                                 </Trigger>
+                                                <!-- Keyboard focus: a thicker accent ring, the same in every theme. -->
+                                                <DataTrigger Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource AncestorType=Button}}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}" />
+                                                    <Setter Property="BorderThickness" Value="3" />
+                                                </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </Border.Style>
@@ -172,7 +221,7 @@
                                            TextTrimming="CharacterEllipsis"
                                            Foreground="{DynamicResource WidgetTextBrush}" />
                             </StackPanel>
-                        </Grid>
+                        </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

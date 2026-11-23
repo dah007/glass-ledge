@@ -10,8 +10,9 @@ using Forms = System.Windows.Forms;
 namespace GlassLedge.App;
 
 /// <summary>
-/// The notification-area icon. Left-click hides or shows every widget; right-click opens a
-/// themed WPF menu: Add widget, Close widget, Hide all, Show all, About, Exit.
+/// The notification-area icon. Left-click hides or shows every widget; right-click (or the Menu key) opens a
+/// themed WPF menu: Add widget, Go to widget (moves keyboard focus to a widget), Close widget, Hide all,
+/// Show all, About, Exit.
 /// </summary>
 internal sealed class TrayIcon : IDisposable
 {
@@ -20,6 +21,7 @@ internal sealed class TrayIcon : IDisposable
     private readonly App _app;
     private readonly Forms.NotifyIcon _notifyIcon;
     private readonly ContextMenu _menu;
+    private readonly MenuItem _goToWidgetItem;
     private readonly MenuItem _closeWidgetItem;
     private readonly MenuItem _hideAllItem;
     private readonly MenuItem _showAllItem;
@@ -28,6 +30,7 @@ internal sealed class TrayIcon : IDisposable
     {
         _app = app;
 
+        _goToWidgetItem = new MenuItem { Header = "Go to widget" };
         _closeWidgetItem = new MenuItem { Header = "Close widget" };
         _hideAllItem = MenuEntry("Hide all", (_, _) => _app.HideAllWidgets());
         _showAllItem = MenuEntry("Show all", (_, _) => _app.ShowAllWidgets());
@@ -36,6 +39,7 @@ internal sealed class TrayIcon : IDisposable
         _menu.SetResourceReference(Control.BackgroundProperty, BrandTheme.MenuBrushKey);
         _menu.SetResourceReference(Control.BorderBrushProperty, BrandTheme.HairlineBrushKey);
         _menu.Items.Add(MenuEntry("Add widget…", (_, _) => _app.AddWidget()));
+        _menu.Items.Add(_goToWidgetItem);
         _menu.Items.Add(_closeWidgetItem);
         _menu.Items.Add(new Separator());
         _menu.Items.Add(_hideAllItem);
@@ -92,14 +96,18 @@ internal sealed class TrayIcon : IDisposable
     {
         var widgets = _app.Widgets;
 
+        _goToWidgetItem.Items.Clear();
         _closeWidgetItem.Items.Clear();
         var labels = WidgetName.MenuLabels(widgets.Select(widget => widget.Settings).ToList());
         for (var i = 0; i < widgets.Count; i++)
         {
             var widget = widgets[i];
+            _goToWidgetItem.Items.Add(MenuEntry(labels[i], (_, _) => widget.FocusFromKeyboard()));
             _closeWidgetItem.Items.Add(MenuEntry(labels[i], (_, _) => _app.ConfirmAndRemoveWidget(widget)));
         }
 
+        // Moving keyboard focus to a hidden widget would show nothing, so it waits for "Show all".
+        _goToWidgetItem.IsEnabled = widgets.Count > 0 && !_app.WidgetsHidden;
         _closeWidgetItem.IsEnabled = widgets.Count > 0;
         _hideAllItem.IsEnabled = widgets.Count > 0 && !_app.WidgetsHidden;
         _showAllItem.IsEnabled = _app.WidgetsHidden;

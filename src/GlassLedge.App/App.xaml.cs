@@ -236,14 +236,23 @@ public partial class App : Application
 
     private void OnUserPreferenceChanged(object? sender, UserPreferenceChangedEventArgs e)
     {
-        // Light/dark switches arrive as General; SystemEvents may raise this off the UI thread.
-        if (e.Category is UserPreferenceCategory.General or UserPreferenceCategory.Color or UserPreferenceCategory.VisualStyle)
+        // Light/dark and transparency switches arrive as General, High Contrast as Accessibility;
+        // SystemEvents may raise this off the UI thread.
+        if (e.Category is UserPreferenceCategory.General or UserPreferenceCategory.Color
+            or UserPreferenceCategory.VisualStyle or UserPreferenceCategory.Accessibility)
         {
-            Dispatcher.InvokeAsync(() =>
-            {
-                WidgetTheme.Apply(Resources);
-                BrandTheme.Apply(Resources);
-            });
+            // Idle priority: WPF refreshes its own cache of the system colours first.
+            Dispatcher.InvokeAsync(
+                () =>
+                {
+                    WidgetTheme.Apply(Resources);
+                    BrandTheme.Apply(Resources);
+                    foreach (var widget in _widgets)
+                    {
+                        widget.RefreshColor();
+                    }
+                },
+                System.Windows.Threading.DispatcherPriority.ApplicationIdle);
         }
 
         // A new wallpaper (or solid desktop colour) changes what custom-coloured glass sits on.

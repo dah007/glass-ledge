@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -39,6 +40,12 @@ public partial class FolderWindow : Window
 
     /// <summary>True while the title row is a text box.</summary>
     private bool _isRenaming;
+
+    /// <summary>True while the widget has taken keyboard focus (see <see cref="FocusFromKeyboard"/>).</summary>
+    private bool _keyboardMode;
+
+    /// <summary>The window that had focus before keyboard mode, so Escape can hand focus back to it.</summary>
+    private IntPtr _previousForeground;
 
     public FolderWindow(FolderWindowSettings settings, App host)
     {
@@ -195,10 +202,12 @@ public partial class FolderWindow : Window
         {
             Tiles.ItemsSource = null;
             ItemCountText.Text = "Unavailable";
+            AutomationProperties.SetName(ItemCountText, "Folder unavailable");
             return;
         }
 
         ItemCountText.Text = entries.Count.ToString(CultureInfo.CurrentCulture);
+        AutomationProperties.SetName(ItemCountText, TileAccessibility.ItemCount(entries.Count));
 
         var contents = WidgetLayout.Fit(entries, WidgetLayout.For(Settings.Size).Capacity);
         var tiles = contents.Visible
@@ -207,6 +216,7 @@ public partial class FolderWindow : Window
                 Label = entry.Name,
                 TargetPath = entry.FullPath,
                 Icon = ShellIcons.GetIcon(entry.FullPath),
+                AccessibleName = TileAccessibility.NameFor(entry),
             })
             .ToList();
 
@@ -217,6 +227,7 @@ public partial class FolderWindow : Window
                 Label = "More",
                 TargetPath = path,
                 OverflowText = "+" + contents.OverflowCount.ToString(CultureInfo.CurrentCulture),
+                AccessibleName = TileAccessibility.OverflowName(contents.OverflowCount),
             });
         }
 
@@ -225,8 +236,16 @@ public partial class FolderWindow : Window
 
     // ---- Mouse: double-click opens, press-and-move drags the widget ----
 
-    private void Card_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    // Preview, so it runs before the tile buttons: the card owns every mouse click (double-click opens,
+    // press-and-move drags). The buttons exist for the keyboard and screen readers.
+    private void Card_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
+        // The rename box handles its own clicks (placing the caret, selecting).
+        if (_isRenaming && IsInRenameBox(e.OriginalSource))
+        {
+            return;
+        }
+
         e.Handled = true;
 
         // A click on the card (not in the rename box, which handles its own clicks) finishes renaming.
@@ -283,6 +302,9 @@ public partial class FolderWindow : Window
         Card.ReleaseMouseCapture();
     }
 
+    private bool IsInRenameBox(object source) =>
+        source is DependencyObject element && (element == NameEditor || NameEditor.IsAncestorOf(element));
+
     private bool IsInTitleRow(object source) =>
         source is DependencyObject element && (element == TitleRow || TitleRow.IsAncestorOf(element));
 
@@ -313,6 +335,125 @@ public partial class FolderWindow : Window
                 Title,
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
+        }
+    }
+
+    // ---- Keyboard and screen readers ----
+
+    /// <summary>
+    /// Takes keyboard focus for someone who can't use the mouse: the widget becomes activatable, comes
+    /// forward, and focus lands on its first tile (or the card when there are none). Arrow keys move between
+    /// tiles, Enter opens one, the Menu key or Shift+F10 opens the menu, F2 renames, F5 refreshes, and
+    /// Escape gives focus back to the window that had it.
+    /// </summary>
+    internal void FocusFromKeyboard()
+    {
+        if (!IsVisible)
+        {
+            ShowOnDesktop();
+        }
+
+        var previous = NativeMethods.GetForegroundWindow();
+        if (previous != Handle)
+        {
+            _previousForeground = previous;
+        }
+
+        _keyboardMode = true;
+        DesktopAttachment.SetActivatable(Handle, true);
+        Activate();
+        FocusFirstTileOrCard();
+    }
+
+    private void FocusFirstTileOrCard()
+    {
+        Tiles.UpdateLayout();
+        if (FindFirstTile() is { } tile)
+        {
+            tile.Focus();
+            Keyboard.Focus(tile);
+        }
+        else
+        {
+            Card.Focus();
+            Keyboard.Focus(Card);
+        }
+    }
+
+    private Button? FindFirstTile() =>
+        Tiles.Visibility == Visibility.Visible ? FindDescendant<Button>(Tiles) : null;
+
+    private static T? FindDescendant<T>(DependencyObject root)
+        where T : DependencyObject
+    {
+        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+        {
+            var child = VisualTreeHelper.GetChild(root, i);
+            if (child is T match)
+            {
+                return match;
+            }
+
+            if (FindDescendant<T>(child) is { } nested)
+            {
+                return nested;
+            }
+        }
+
+        return null;
+    }
+
+    private void LeaveKeyboardMode(bool restoreForeground)
+    {
+        if (!_keyboardMode)
+        {
+            return;
+        }
+
+        _keyboardMode = false;
+        Keyboard.ClearFocus();
+        DesktopAttachment.SetActivatable(Handle, false);
+        DesktopAttachment.SendToBottom(Handle);
+
+        if (restoreForeground && _previousForeground != IntPtr.Zero)
+        {
+            NativeMethods.SetForegroundWindow(_previousForeground);
+        }
+
+        _previousForeground = IntPtr.Zero;
+    }
+
+    /// <summary>A tile pressed with Enter or Space, or invoked by a screen reader. The mouse never gets here.</summary>
+    private void Tile_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: TileViewModel tile })
+        {
+            Open(tile.TargetPath, tile.Label);
+        }
+    }
+
+    private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        // The rename box handles Enter and Escape itself, and an open menu owns Escape.
+        if (_isRenaming || Card.ContextMenu is { IsOpen: true })
+        {
+            return;
+        }
+
+        switch (e.Key)
+        {
+            case Key.Escape when _keyboardMode:
+                LeaveKeyboardMode(restoreForeground: true);
+                e.Handled = true;
+                break;
+            case Key.F5:
+                LoadFolder();
+                e.Handled = true;
+                break;
+            case Key.F2:
+                BeginRename();
+                e.Handled = true;
+                break;
         }
     }
 
@@ -373,6 +514,12 @@ public partial class FolderWindow : Window
         FolderNameText.Text = WidgetName.For(Settings);
         Title = FolderNameText.Text;
 
+        if (_keyboardMode)
+        {
+            FocusFirstTileOrCard(); // keep the keyboard where it was; the widget stays activatable
+            return;
+        }
+
         DesktopAttachment.SetActivatable(Handle, false);
         DesktopAttachment.SendToBottom(Handle);
     }
@@ -397,6 +544,9 @@ public partial class FolderWindow : Window
     protected override void OnDeactivated(EventArgs e)
     {
         base.OnDeactivated(e);
+
+        // Switched to another window: stop being activatable, but don't pull focus back.
+        LeaveKeyboardMode(restoreForeground: false);
         EndRename(save: true);
     }
 
@@ -423,9 +573,12 @@ public partial class FolderWindow : Window
     /// </summary>
     private void ApplyColor(uint? argb)
     {
-        if (argb is { } color)
+        // In High Contrast the system colours win, whatever colour was chosen.
+        if (argb is { } color && !SystemParameters.HighContrast)
         {
-            WidgetTheme.Apply(Resources, WidgetPalette.ForBackground(color, _host.WallpaperColor));
+            // With Windows transparency effects off the card is solid, so the text is chosen against the colour itself.
+            var solid = WidgetTheme.IsTransparencyEnabled() ? color : color | 0xFF000000;
+            WidgetTheme.Apply(Resources, WidgetPalette.ForBackground(solid, _host.WallpaperColor));
         }
         else
         {
@@ -443,10 +596,14 @@ public partial class FolderWindow : Window
     }
 
     /// <summary>Shows or hides the glass layers. They are never hit-testable, so they can't swallow clicks either way.</summary>
-    private void ApplyGloss() => IsGlossy = Settings.GlossEnabled;
+    private void ApplyGloss() => IsGlossy = Settings.GlossEnabled && !SystemParameters.HighContrast;
 
-    /// <summary>Re-works out a custom colour, e.g. after the wallpaper changed.</summary>
-    internal void RefreshColor() => ApplyColor(SavedColor);
+    /// <summary>Re-works out the colour and gloss, e.g. after the wallpaper or a Windows setting changed.</summary>
+    internal void RefreshColor()
+    {
+        ApplyColor(SavedColor);
+        ApplyGloss();
+    }
 
     private void ToggleCollapsed_Click(object sender, RoutedEventArgs e) => SetCollapsed(!Settings.IsCollapsed);
 

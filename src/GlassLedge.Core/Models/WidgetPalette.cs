@@ -104,6 +104,40 @@ public sealed record WidgetPalette(
             : WithEdges(Dark with { Tint = tint, SecondaryText = 0xCCFFFFFF }, darkText: false);
     }
 
+    /// <summary>
+    /// Palette for Windows High Contrast mode: a solid card in the system window colour with text, border and
+    /// tile edges in the system text colour, and the hot-track colour for hover and keyboard focus. No gloss,
+    /// no translucency, so the colours the person chose in Windows are the only ones used.
+    /// </summary>
+    public static WidgetPalette HighContrast(uint window, uint windowText, uint hotTrack)
+    {
+        var solidWindow = window | 0xFF000000;
+        var solidText = windowText | 0xFF000000;
+
+        return new WidgetPalette(
+            Tint: solidWindow,
+            Border: solidText,
+            Text: solidText,
+            SecondaryText: solidText,
+            Tile: solidWindow,
+            TileHover: solidWindow,
+            GlossVeil: 0,
+            Gloss: 0,
+            GlossBounce: 0,
+            GlossStreak: 0,
+            GlossRim: solidText,
+            GlossRimShade: solidText,
+            TileGloss: 0,
+            TileEdge: solidText,
+            Accent: hotTrack | 0xFF000000);
+    }
+
+    /// <summary>
+    /// The same palette with a fully opaque card, for when Windows transparency effects are turned off.
+    /// Only the tint changes: the text colours were chosen for solid glass anyway.
+    /// </summary>
+    public WidgetPalette Opaque() => this with { Tint = Tint | 0xFF000000 };
+
     /// <summary>How opaque the card edge is: clearly visible, but still a little glassy.</summary>
     public const byte EdgeAlpha = 0xE6;
 
