@@ -52,6 +52,27 @@ public sealed record BrandPalette(
         Menu: 0xFF23283F,
         OnAmberFocus: Dusk);
 
+    /// <summary>
+    /// Windows High Contrast: the system window and text colours everywhere, the hot-track colour for keyboard
+    /// focus, and the system highlight pair for the primary button (see <c>BrandTheme</c>).
+    /// </summary>
+    public static BrandPalette HighContrast(uint window, uint windowText, uint hotTrack, uint highlightText)
+    {
+        var solidWindow = window | 0xFF000000;
+        var solidText = windowText | 0xFF000000;
+
+        return new BrandPalette(
+            Page: solidWindow,
+            Text: solidText,
+            SecondaryText: solidText,
+            Row: solidWindow,
+            Hairline: solidText,
+            Footer: solidWindow,
+            Focus: hotTrack | 0xFF000000,
+            Menu: solidWindow,
+            OnAmberFocus: highlightText | 0xFF000000);
+    }
+
     /// <summary>The palette for the Windows light or dark app setting.</summary>
     public static BrandPalette For(bool light) => light ? Light : Dark;
 }

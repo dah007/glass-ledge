@@ -57,6 +57,19 @@ internal static class ProcessWindows
     public static void RaiseToTop(IntPtr hwnd) =>
         SetWindowPos(hwnd, HwndTopmost, 0, 0, 0, 0, SwpNoMove | SwpNoSize | SwpNoActivate);
 
+    /// <summary>The id of the process that owns the top-level window under a screen point (0 when there is none).</summary>
+    public static int ProcessIdAt(int x, int y)
+    {
+        var hwnd = WindowFromPoint(new Point { X = x, Y = y });
+        if (hwnd == IntPtr.Zero)
+        {
+            return 0;
+        }
+
+        GetWindowThreadProcessId(GetAncestor(hwnd, GaRoot), out var pid);
+        return (int)pid;
+    }
+
     /// <summary>Describes the top-level window under a screen point, for failure messages.</summary>
     public static string DescribeWindowAt(int x, int y)
     {

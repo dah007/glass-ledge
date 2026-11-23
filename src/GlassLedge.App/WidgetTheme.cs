@@ -34,9 +34,25 @@ internal static class WidgetTheme
         AccentBrushKey,
     ];
 
-    /// <summary>Applies the palette for the current Windows light/dark setting.</summary>
-    public static void Apply(ResourceDictionary resources) =>
-        Apply(resources, WindowsTheme.PaletteFor(IsWindowsLightTheme()));
+    /// <summary>
+    /// Applies the palette for the current Windows settings: High Contrast colours when that mode is on,
+    /// otherwise the light or dark glass, made opaque when Windows transparency effects are off.
+    /// </summary>
+    public static void Apply(ResourceDictionary resources) => Apply(resources, CurrentPalette());
+
+    internal static WidgetPalette CurrentPalette()
+    {
+        if (SystemParameters.HighContrast)
+        {
+            return WidgetPalette.HighContrast(
+                ToArgb(SystemColors.WindowColor),
+                ToArgb(SystemColors.WindowTextColor),
+                ToArgb(SystemColors.HotTrackColor));
+        }
+
+        var palette = WindowsTheme.PaletteFor(IsWindowsLightTheme());
+        return IsTransparencyEnabled() ? palette : palette.Opaque();
+    }
 
     /// <summary>True when Windows apps are set to light mode (the default when the setting is missing).</summary>
     public static bool IsWindowsLightTheme()
@@ -44,6 +60,15 @@ internal static class WidgetTheme
         using var key = Registry.CurrentUser.OpenSubKey(WindowsTheme.PersonalizeKeyPath);
         return WindowsTheme.IsLightTheme(key?.GetValue(WindowsTheme.AppsUseLightThemeValueName));
     }
+
+    /// <summary>True unless "Transparency effects" is switched off in Windows settings.</summary>
+    public static bool IsTransparencyEnabled()
+    {
+        using var key = Registry.CurrentUser.OpenSubKey(WindowsTheme.PersonalizeKeyPath);
+        return WindowsTheme.IsTransparencyEnabled(key?.GetValue(WindowsTheme.EnableTransparencyValueName));
+    }
+
+    internal static uint ToArgb(Color color) => ColorMath.ToArgb(color.A, color.R, color.G, color.B);
 
     public static void Apply(ResourceDictionary resources, WidgetPalette palette)
     {

@@ -14,4 +14,10 @@ public sealed class TileViewModel
 
     /// <summary>"+N" on the overflow tile; null on normal tiles.</summary>
     public string? OverflowText { get; init; }
+
+    /// <summary>What a screen reader says for this tile when it differs from <see cref="Label"/>.</summary>
+    public string? AccessibleName { get; init; }
+
+    /// <summary>The tile's name for assistive technology: <see cref="AccessibleName"/>, or the label.</summary>
+    public string SpokenName => AccessibleName ?? Label;
 }

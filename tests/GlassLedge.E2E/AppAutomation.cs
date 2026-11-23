@@ -73,17 +73,46 @@ internal static class AppAutomation
     /// <summary>
     /// Raises the window containing <paramref name="element"/> above everything (without
     /// activating it) so synthetic mouse input reaches it. Call before clicking a widget.
+    /// <para>
+    /// The app sends a widget back to the bottom right after some actions (for example when the colour
+    /// dialog closes, just after it saves), which undoes a raise made in between. So this checks that the
+    /// element's click point really belongs to the app afterwards and raises again if it doesn't.
+    /// </para>
     /// </summary>
     public static void RaiseForInput(AutomationElement element)
     {
+        var hwnd = IntPtr.Zero;
         for (var current = element; current is not null; current = current.Parent)
         {
-            var hwnd = current.Properties.NativeWindowHandle.ValueOrDefault;
+            hwnd = current.Properties.NativeWindowHandle.ValueOrDefault;
             if (hwnd != IntPtr.Zero)
             {
-                ProcessWindows.RaiseToTop(hwnd);
-                Thread.Sleep(100);
-                return;
+                break;
+            }
+        }
+
+        if (hwnd == IntPtr.Zero)
+        {
+            return;
+        }
+
+        var processId = element.Properties.ProcessId.ValueOrDefault;
+        for (var attempt = 0; attempt < 20; attempt++)
+        {
+            ProcessWindows.RaiseToTop(hwnd);
+            Thread.Sleep(150);
+
+            try
+            {
+                var point = element.GetClickablePoint();
+                if (ProcessWindows.ProcessIdAt(point.X, point.Y) == processId)
+                {
+                    return;
+                }
+            }
+            catch (Exception)
+            {
+                return; // no clickable point to verify; the click itself will report the problem
             }
         }
     }

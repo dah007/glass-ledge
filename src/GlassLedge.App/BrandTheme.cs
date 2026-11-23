@@ -26,11 +26,34 @@ internal static class BrandTheme
     public const string AmberPressedBrushKey = "BrandAmberPressedBrush";
     public const string OnAmberBrushKey = "BrandOnAmberBrush";
 
-    /// <summary>Applies the palette for the current Windows light/dark setting.</summary>
-    public static void Apply(ResourceDictionary resources) =>
-        Apply(resources, BrandPalette.For(WidgetTheme.IsWindowsLightTheme()));
+    /// <summary>Applies the palette for the current Windows light/dark setting, or the system colours in High Contrast.</summary>
+    public static void Apply(ResourceDictionary resources)
+    {
+        if (!SystemParameters.HighContrast)
+        {
+            Apply(resources, BrandPalette.For(WidgetTheme.IsWindowsLightTheme()));
+            return;
+        }
+
+        var highlightText = WidgetTheme.ToArgb(SystemColors.HighlightTextColor);
+        ApplyPalette(resources, BrandPalette.HighContrast(
+            WidgetTheme.ToArgb(SystemColors.WindowColor),
+            WidgetTheme.ToArgb(SystemColors.WindowTextColor),
+            WidgetTheme.ToArgb(SystemColors.HotTrackColor),
+            highlightText));
+
+        // The primary button takes the system highlight pair instead of amber and graphite.
+        var highlight = WidgetTheme.ToArgb(SystemColors.HighlightColor);
+        ApplyAmber(resources, highlight, highlight, highlight, highlightText);
+    }
 
     public static void Apply(ResourceDictionary resources, BrandPalette palette)
+    {
+        ApplyPalette(resources, palette);
+        ApplyAmber(resources, BrandPalette.Amber, BrandPalette.AmberHover, BrandPalette.AmberPressed, BrandPalette.Graphite);
+    }
+
+    private static void ApplyPalette(ResourceDictionary resources, BrandPalette palette)
     {
         resources[PageBrushKey] = WidgetTheme.ToBrush(palette.Page);
         resources[TextBrushKey] = WidgetTheme.ToBrush(palette.Text);
@@ -41,10 +64,13 @@ internal static class BrandTheme
         resources[FocusBrushKey] = WidgetTheme.ToBrush(palette.Focus);
         resources[MenuBrushKey] = WidgetTheme.ToBrush(palette.Menu);
         resources[OnAmberFocusBrushKey] = WidgetTheme.ToBrush(palette.OnAmberFocus);
+    }
 
-        resources[AmberBrushKey] = WidgetTheme.ToBrush(BrandPalette.Amber);
-        resources[AmberHoverBrushKey] = WidgetTheme.ToBrush(BrandPalette.AmberHover);
-        resources[AmberPressedBrushKey] = WidgetTheme.ToBrush(BrandPalette.AmberPressed);
-        resources[OnAmberBrushKey] = WidgetTheme.ToBrush(BrandPalette.Graphite);
+    private static void ApplyAmber(ResourceDictionary resources, uint fill, uint hover, uint pressed, uint text)
+    {
+        resources[AmberBrushKey] = WidgetTheme.ToBrush(fill);
+        resources[AmberHoverBrushKey] = WidgetTheme.ToBrush(hover);
+        resources[AmberPressedBrushKey] = WidgetTheme.ToBrush(pressed);
+        resources[OnAmberBrushKey] = WidgetTheme.ToBrush(text);
     }
 }

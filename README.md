@@ -107,7 +107,24 @@ The app runs in the notification area (next to the clock), even with no widgets.
 | Action | How |
 | --- | --- |
 | Hide or show every widget | Left-click the tray icon. Hidden widgets stay hidden after a restart. |
-| Add widget, Close widget (pick one), Hide all, Show all, About, Exit | Right-click the tray icon |
+| Add widget, Go to widget (pick one), Close widget (pick one), Hide all, Show all, About, Exit | Right-click the tray icon |
+
+### Keyboard and screen readers
+
+Everything can be done without a mouse. Widgets sit on the desktop and never take focus on their own, so you move into one on purpose:
+
+1. Press **Win+B**, arrow to the GlassLedge icon, and open its menu with the **Menu** key (or Shift+F10).
+2. Choose **Go to widget** and pick one. Focus lands on its first item.
+
+| Action | Keys |
+| --- | --- |
+| Move between items | Arrow keys (Tab enters and leaves the item group) |
+| Open the focused item | Enter or Space |
+| Open the widget's menu (Collapse, Color, Size, Remove…) | Menu key or Shift+F10 |
+| Rename / Refresh | F2 / F5 |
+| Give focus back to the window you came from | Esc |
+
+In the color picker, Tab to the square or a bar and use the arrow keys (Shift or Page Up/Down for bigger steps); the hex box and presets work as usual. Screen readers announce each item by name ("Invoices, folder"), the item count, and the picker's sliders with their values. In Windows High Contrast the widgets use your system colors and drop the glass effects, and with **Transparency effects** turned off they turn solid.
 
 ## Settings
 
