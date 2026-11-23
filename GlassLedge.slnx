@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/GlassLedge.App/GlassLedge.App.csproj" />
+    <Project Path="src/GlassLedge.Core/GlassLedge.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GlassLedge.Tests/GlassLedge.Tests.csproj" />
+    <Project Path="tests/GlassLedge.AppTests/GlassLedge.AppTests.csproj" />
+    <Project Path="tests/GlassLedge.TestSupport/GlassLedge.TestSupport.csproj" />
+    <Project Path="tests/GlassLedge.Smoke/GlassLedge.Smoke.csproj" />
+    <Project Path="tests/GlassLedge.E2E/GlassLedge.E2E.csproj" />
+  </Folder>
+</Solution>

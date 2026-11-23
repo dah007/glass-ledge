@@ -1,0 +1,17 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!-- Single source of truth for the version. Release builds override it from the git tag (-p:Version=...). -->
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Product>GlassLedge</Product>
+    <Company>dah007</Company>
+    <Authors>dah007</Authors>
+    <Copyright>Copyright © dah007</Copyright>
+    <RepositoryUrl>https://github.com/dah007/glass-ledge</RepositoryUrl>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Build
+        run: dotnet build GlassLedge.slnx -c Release
+
+      - name: Unit tests
+        run: dotnet test GlassLedge.slnx -c Release --no-build --filter "Category!=Smoke&Category!=E2E" --logger trx --results-directory TestResults
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults
+
+  smoke:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Build
+        run: dotnet build GlassLedge.slnx -c Release
+
+      - name: Smoke tests
+        run: dotnet test tests/GlassLedge.Smoke/GlassLedge.Smoke.csproj -c Release --no-build --logger trx --results-directory TestResults-Smoke
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-smoke
+          path: TestResults-Smoke
+
+  e2e:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Build
+        run: dotnet build GlassLedge.slnx -c Release
+
+      - name: End-to-end tests
+        run: dotnet test tests/GlassLedge.E2E/GlassLedge.E2E.csproj -c Release --no-build --logger trx --results-directory TestResults-E2E
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-e2e
+          path: TestResults-E2E

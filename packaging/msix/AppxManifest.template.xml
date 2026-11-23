@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Package manifest for the Microsoft Store (MSIX) build of GlassLedge.
+  build/build-msix.ps1 fills the {{...}} tokens, so don't edit the generated copy in artifacts\msix.
+  The identity values come from Partner Center (Product identity); see packaging/README.md.
+-->
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         IgnorableNamespaces="uap desktop rescap">
+
+  <Identity Name="{{IdentityName}}"
+            Publisher="{{Publisher}}"
+            Version="{{Version}}"
+            ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>GlassLedge</DisplayName>
+    <PublisherDisplayName>{{PublisherDisplayName}}</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <!-- Windows 11 only (build 22000), the same as the app. -->
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.22000.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+
+  <Applications>
+    <Application Id="GlassLedge" Executable="GlassLedge.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements DisplayName="GlassLedge"
+                          Description="Glass folder widgets for your Windows 11 desktop."
+                          BackgroundColor="transparent"
+                          Square150x150Logo="Assets\Square150x150Logo.png"
+                          Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+      </uap:VisualElements>
+
+      <Extensions>
+        <!-- Start with Windows is off until the user turns it on (Settings > Apps > Startup). -->
+        <desktop:Extension Category="windows.startupTask" Executable="GlassLedge.exe" EntryPoint="Windows.FullTrustApplication">
+          <desktop:StartupTask TaskId="GlassLedgeStartup" Enabled="false" DisplayName="GlassLedge" />
+        </desktop:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <!-- A normal desktop (WPF) app: it reads the folders you pin and shows their icons. -->
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>

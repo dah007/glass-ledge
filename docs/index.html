@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlassLedge: your favorite folders, floating on your desktop</title>
+<meta name="description" content="GlassLedge puts your favorite folders on your Windows 11 desktop as glass widgets. Free and open source.">
+<meta property="og:title" content="GlassLedge: your favorite folders, floating on your desktop">
+<meta property="og:description" content="Glass folder widgets for Windows 11. Free and open source.">
+<meta property="og:image" content="assets/4-windows.png">
+<meta name="theme-color" content="#1B1F36">
+<link rel="icon" type="image/png" href="assets/icon-256.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="assets/icon-256.png" alt="">GlassLedge</a>
+    <nav class="site" aria-label="Main">
+      <a href="#features">Features</a>
+      <a href="#make-it-yours">Customize</a>
+      <a href="#open-source">Open source</a>
+      <a class="keep" href="#install">Install</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+<div class="hero">
+  <div class="wrap grid">
+    <div>
+      <span class="eyebrow">For Windows 11</span>
+      <h1>Your favorite folders, <em>floating</em> on your desktop.</h1>
+      <p class="lede">Pin any folder as a frosted-glass widget. Glance, click, open. No digging through File Explorer.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="https://github.com/dah007/glass-ledge/releases/latest">Download for Windows</a>
+        <a class="btn btn-ghost" href="https://github.com/dah007/glass-ledge">View on GitHub</a>
+      </div>
+      <p class="fine">Free and open source. Installs for your user only, no admin prompt.</p>
+    </div>
+    <div class="shot">
+      <img src="assets/4-windows.png" alt="Four GlassLedge widgets on a Windows desktop: Downloads and another small widget with +N overflow tiles, a large Games widget full of app icons, and a collapsed Documents widget" width="1200" height="675">
+    </div>
+  </div>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <h2>A folder that stays where you put it.</h2>
+    <p class="sub">Each widget mirrors a real folder with real icons and thumbnails. Drag it anywhere; it remembers.</p>
+    <div class="cards">
+      <div class="card"><div class="tile">🗂️</div><h3>Live folder view</h3><p>Real shell icons and image previews, in four sizes from 2×2 up to 5×5. Overflow becomes a <strong>+N</strong> tile that opens the folder.</p></div>
+      <div class="card"><div class="tile">🖥️</div><h3>Part of the desktop</h3><p>Above the wallpaper, below your apps. Widgets survive <strong>Win+D</strong> and stay out of the taskbar and Alt+Tab.</p></div>
+      <div class="card"><div class="tile">🌗</div><h3>Matches Windows</h3><p>Glass that follows your light or dark theme, live, with a real blur of what's behind it.</p></div>
+      <div class="card"><div class="tile">📍</div><h3>Remembers everything</h3><p>Folder, position, size, name and color come back on the next launch. Drag to move; it saves when you let go.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="make-it-yours" class="alt">
+  <div class="wrap split">
+    <div>
+      <h2>Make each one yours.</h2>
+      <p class="sub">Rename it, tint it, collapse it. Text flips between black and white so it stays readable on any color and any wallpaper.</p>
+      <ul class="ticks">
+        <li>Tint the glass any color, with a full picker, opacity slider and hex entry</li>
+        <li>Optional glossy highlights, per widget</li>
+        <li>Collapse a widget down to its title with a double-click</li>
+        <li>Everything lives in the right-click menu</li>
+      </ul>
+    </div>
+    <div class="pics">
+      <img src="assets/folder-right-click.png" alt="A widget's right-click menu with Refresh, Collapse, Open in File Explorer, Change folder, Rename, Color, Size and more" loading="lazy">
+      <img src="assets/colorpicker.png" alt="The widget color dialog with a saturation square, hue and opacity sliders, hex field and presets" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<section id="open-source" class="dark">
+  <div class="wrap">
+    <h2>Open source, and growing.</h2>
+    <p class="sub">GlassLedge is Apache 2.0 licensed and built in the open. Read it, fork it, send a pull request.</p>
+    <div class="cards">
+      <div class="card"><div class="tile">⚙️</div><h3>Modern .NET</h3><p>WPF on .NET 10, with a tested core library and CI on every push.</p></div>
+      <div class="card"><div class="tile">🧩</div><h3>Plugins <span class="badge">In development</span></h3><p>Widgets beyond folders: a search box, a clock, weather. A plugin supplies the body and the app supplies the glass. The design is on GitHub.</p></div>
+      <div class="card"><div class="tile">☕</div><h3>Made by one person</h3><p>If it earns a spot on your desktop, you can <a href="https://buymeacoffee.com/dah007">buy the author a coffee</a>.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>Install in a minute.</h2>
+    <p class="sub">Windows 11 (22H2 or later), 64-bit. The .NET runtime is bundled.</p>
+    <ol class="steps">
+      <li>Download the latest <code>Setup.exe</code> from the <a href="https://github.com/dah007/glass-ledge/releases/latest">Releases page</a>.</li>
+      <li>Run it. It installs for your user only, and you can choose to start with Windows.</li>
+      <li>Pick a folder for your first widget, then drag it where you want it.</li>
+    </ol>
+    <p class="note"><strong>Heads up:</strong> the installer isn't code-signed yet, so Windows SmartScreen may warn you the first time. Choose <em>More info</em>, then <em>Run anyway</em>. The full source is on GitHub if you'd like to check or build it yourself.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a href="https://github.com/dah007/glass-ledge">GitHub</a>
+      <a href="https://www.linkedin.com/in/dah007">LinkedIn</a>
+      <a href="https://buymeacoffee.com/dah007">Buy me a coffee</a>
+      <a href="brand.html">Brand</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+    <div>GlassLedge · Apache License 2.0 · Made by dah007</div>
+  </div>
+</footer>
+</body>
+</html>
