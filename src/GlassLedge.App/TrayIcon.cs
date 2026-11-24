@@ -12,7 +12,7 @@ namespace GlassLedge.App;
 /// <summary>
 /// The notification-area icon. Left-click hides or shows every widget; right-click (or the Menu key) opens a
 /// themed WPF menu: Add widget, Go to widget (moves keyboard focus to a widget), Close widget, Hide all,
-/// Show all, About, Exit.
+/// Show all, Preferences, About, Exit.
 /// </summary>
 internal sealed class TrayIcon : IDisposable
 {
@@ -45,6 +45,7 @@ internal sealed class TrayIcon : IDisposable
         _menu.Items.Add(_hideAllItem);
         _menu.Items.Add(_showAllItem);
         _menu.Items.Add(new Separator());
+        _menu.Items.Add(MenuEntry("Preferences…", (_, _) => _app.ShowPreferences()));
         _menu.Items.Add(MenuEntry("About", (_, _) => _app.ShowAbout()));
         _menu.Items.Add(MenuEntry("Exit", (_, _) => _app.Shutdown()));
 

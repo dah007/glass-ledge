@@ -12,6 +12,9 @@ public sealed class TileViewModel
 
     public ImageSource? Icon { get; init; }
 
+    /// <summary>True for folders and for the overflow tile (which opens the widget's folder).</summary>
+    public bool IsFolder { get; init; }
+
     /// <summary>"+N" on the overflow tile; null on normal tiles.</summary>
     public string? OverflowText { get; init; }
 

@@ -14,4 +14,10 @@ public sealed class AppSettings
 
     /// <summary>True when the user chose "Hide all" from the tray; widgets stay hidden across restarts.</summary>
     public bool WidgetsHidden { get; set; }
+
+    /// <summary>Preferences: clicking a folder tile opens it in a GlassLedge window instead of File Explorer.</summary>
+    public bool OpenFoldersInPane { get; set; }
+
+    /// <summary>Preferences: plugin code may run. Off by default, because a plugin is a program.</summary>
+    public bool AllowPlugins { get; set; }
 }

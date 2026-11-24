@@ -106,6 +106,7 @@
                 <MenuItem Header="Add widget…" Click="AddWidget_Click" />
                 <MenuItem Header="Remove widget" Click="RemoveWidget_Click" />
                 <Separator />
+                <MenuItem Header="Preferences…" Click="Preferences_Click" />
                 <MenuItem Header="About" Click="About_Click" />
                 <MenuItem Header="Exit" Click="Exit_Click" />
             </ContextMenu>

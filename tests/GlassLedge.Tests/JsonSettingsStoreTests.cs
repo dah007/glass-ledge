@@ -22,6 +22,27 @@ public sealed class JsonSettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void Load_WhenFileMissing_LeavesPaneAndPluginsOff()
+    {
+        var settings = new JsonSettingsStore(_temp.Combine("settings.json")).Load();
+
+        Assert.False(settings.OpenFoldersInPane);
+        Assert.False(settings.AllowPlugins);
+    }
+
+    [Fact]
+    public void SaveThenLoad_RoundTripsPreferences()
+    {
+        var store = new JsonSettingsStore(_temp.Combine("settings.json"));
+
+        store.Save(new AppSettings { OpenFoldersInPane = true, AllowPlugins = true });
+        var loaded = store.Load();
+
+        Assert.True(loaded.OpenFoldersInPane);
+        Assert.True(loaded.AllowPlugins);
+    }
+
+    [Fact]
     public void SaveThenLoad_RoundTripsAllWindowValues()
     {
         var store = new JsonSettingsStore(_temp.Combine("settings.json"));
