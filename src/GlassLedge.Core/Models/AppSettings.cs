@@ -15,6 +15,12 @@ public sealed class AppSettings
     /// <summary>True when the user chose "Hide all" from the tray; widgets stay hidden across restarts.</summary>
     public bool WidgetsHidden { get; set; }
 
+    /// <summary>
+    /// Which widget is in front of which, as widget ids from the back of the stack to the front. Covers folder
+    /// and plugin widgets alike; ids that no longer exist are ignored and widgets missing from it go in front.
+    /// </summary>
+    public List<Guid> LayerOrder { get; set; } = [];
+
     /// <summary>Preferences: clicking a folder tile opens it in a GlassLedge window instead of File Explorer.</summary>
     public bool OpenFoldersInPane { get; set; }
 
