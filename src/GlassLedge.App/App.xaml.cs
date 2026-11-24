@@ -41,6 +41,16 @@ public partial class App : Application
     /// <summary>Shows a Windows notification next to the tray icon, if the tray exists yet.</summary>
     internal void Notify(string message) => _tray?.ShowNotification(message);
 
+    /// <summary>Folder widgets and plugin widgets together: everything that has a place in the stack.</summary>
+    internal IEnumerable<ILayeredWidget> LayeredWidgets => _widgets.Cast<ILayeredWidget>().Concat(Plugins.Windows);
+
+    /// <summary>Keeps the widgets in their saved front-to-back order.</summary>
+    internal WidgetLayers Layers => _layers ??= new WidgetLayers(this);
+    private WidgetLayers? _layers;
+
+    /// <summary>Puts every widget window back in its place in the stack (the desktop layer, in order).</summary>
+    internal void RestackWidgets() => Layers.Restack();
+
     internal bool WidgetsHidden => _settings.WidgetsHidden;
 
     /// <summary>Preferences: folders open in a GlassLedge pane instead of File Explorer.</summary>

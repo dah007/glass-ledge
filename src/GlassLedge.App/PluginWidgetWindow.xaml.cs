@@ -19,7 +19,7 @@ namespace GlassLedge.App;
 /// presses Esc or clicks another window.
 /// </para>
 /// </summary>
-internal partial class PluginWidgetWindow : Window
+internal partial class PluginWidgetWindow : Window, ILayeredWidget
 {
     /// <summary>The card's border (2) and padding (10) on each side, around the plugin's contents.</summary>
     private const double Chrome = 24;
@@ -65,6 +65,12 @@ internal partial class PluginWidgetWindow : Window
 
     private IntPtr Handle => new WindowInteropHelper(this).Handle;
 
+    Guid ILayeredWidget.WidgetId => Settings.Id;
+
+    ScreenRect ILayeredWidget.Bounds => new(Left, Top, ActualWidth, ActualHeight);
+
+    IntPtr ILayeredWidget.LayerHandle => Handle;
+
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
@@ -74,7 +80,7 @@ internal partial class PluginWidgetWindow : Window
     protected override void OnContentRendered(EventArgs e)
     {
         base.OnContentRendered(e);
-        DesktopAttachment.SendToBottom(Handle);
+        _host.RestackWidgets();
     }
 
     protected override void OnClosed(EventArgs e)
@@ -104,7 +110,7 @@ internal partial class PluginWidgetWindow : Window
     internal void ShowOnDesktop()
     {
         Show();
-        DesktopAttachment.SendToBottom(Handle);
+        _host.RestackWidgets();
     }
 
     // ---- Colour and gloss: the same choices, and the same code path, as a folder widget ----
@@ -146,7 +152,7 @@ internal partial class PluginWidgetWindow : Window
         }
 
         ApplyColor(SavedColor); // the saved choice, or back to it after Cancel
-        DesktopAttachment.SendToBottom(Handle);
+        _host.RestackWidgets();
     }
 
     private void Gloss_Click(object sender, RoutedEventArgs e)
@@ -199,7 +205,7 @@ internal partial class PluginWidgetWindow : Window
         _typing = false;
         Keyboard.ClearFocus();
         DesktopAttachment.SetActivatable(Handle, false);
-        DesktopAttachment.SendToBottom(Handle);
+        _host.RestackWidgets();
 
         if (restoreForeground && _previousForeground != IntPtr.Zero)
         {
@@ -252,7 +258,7 @@ internal partial class PluginWidgetWindow : Window
 
         var (left, top) = (Left, Top);
         DragMove(); // blocks until the button is released, so this saves once, when dragging is complete
-        DesktopAttachment.SendToBottom(Handle);
+        _host.RestackWidgets();
         if (Left != left || Top != top)
         {
             Settings.Left = Left;
@@ -281,10 +287,19 @@ internal partial class PluginWidgetWindow : Window
 
     // ---- Menu ----
 
+    // Showing the right-click menu can lift the widget above its neighbours. Put the saved order back as the
+    // menu opens and again as it closes, so looking at the menu never changes which widget is on top.
+    private void RestackSoon() =>
+        Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new Action(_host.RestackWidgets));
+
+    private void ContextMenu_Closed(object sender, RoutedEventArgs e) => RestackSoon();
+
     private void ContextMenu_Opened(object sender, RoutedEventArgs e)
     {
+        RestackSoon();
         GlossItem.IsChecked = Settings.GlossEnabled;
         PluginMenu.Fill(AddPluginMenu, _host);
+        LayerMenu.Fill(LayerItem, _host, this);
     }
 
     private void Remove_Click(object sender, RoutedEventArgs e) => _host.Plugins.Remove(this);

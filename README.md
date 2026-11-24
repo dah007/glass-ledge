@@ -88,6 +88,7 @@ copied over automatically on first launch (the old settings folder is left untou
 | Action | How |
 | --- | --- |
 | Move a widget | Drag anywhere on it. Its position is saved when you let go. |
+| Choose which widget is on top when they overlap | Right-click a widget > **Layer** > **Bring to front**, **Bring forward**, **Send backward** or **Send to back**. Forward and backward step past the nearest widget it overlaps, so each use changes what you see; items that wouldn't change anything are greyed out. The order is remembered, and it works for plugin widgets too |
 | Open a file or folder | Double-click its icon |
 | See items that don't fit | Double-click the **+N** tile (opens the folder in File Explorer) |
 | Collapse to just the title row, or expand again | Double-click the title row, or right-click > **Collapse** / **Expand** |
@@ -139,7 +140,7 @@ GlassLedge can show plugin widgets: GlassLedge draws the glass, the plugin suppl
 ## Settings
 
 Saved as JSON at `%APPDATA%\GlassLedge\settings.json`: one entry per widget
-with its folder, position, size, collapsed state, custom name, color and glossy setting, one entry per plugin widget (plugin, position, color, glossy), the Preferences choices, plus whether
+with its folder, position, size, collapsed state, custom name, color and glossy setting, one entry per plugin widget (plugin, position, color, glossy), the Preferences choices, the front-to-back order of the widgets, plus whether
 widgets are currently hidden. Uninstalling keeps this file.
 
 ## Development Guide

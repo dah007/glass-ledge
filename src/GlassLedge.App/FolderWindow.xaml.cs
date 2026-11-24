@@ -16,7 +16,7 @@ using GlassLedge.Core.Services;
 namespace GlassLedge.App;
 
 /// <summary>An iOS-style folder widget pinned to the desktop.</summary>
-public partial class FolderWindow : Window
+public partial class FolderWindow : Window, ILayeredWidget
 {
     public static readonly DependencyProperty GridColumnsProperty = DependencyProperty.Register(
         nameof(GridColumns), typeof(int), typeof(FolderWindow), new PropertyMetadata(4));
@@ -90,6 +90,12 @@ public partial class FolderWindow : Window
 
     private IntPtr Handle => new WindowInteropHelper(this).Handle;
 
+    Guid ILayeredWidget.WidgetId => Settings.Id;
+
+    ScreenRect ILayeredWidget.Bounds => new(Left, Top, ActualWidth, ActualHeight);
+
+    IntPtr ILayeredWidget.LayerHandle => Handle;
+
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
@@ -105,8 +111,8 @@ public partial class FolderWindow : Window
     {
         base.OnContentRendered(e);
 
-        // Show() puts a new window on top of everything; push it back down to the desktop layer.
-        DesktopAttachment.SendToBottom(Handle);
+        // Show() puts a new window on top of everything; push it back down to the desktop layer, in order.
+        _host.RestackWidgets();
     }
 
     private void ApplySize()
@@ -294,7 +300,7 @@ public partial class FolderWindow : Window
 
         // DragMove blocks until the button is released, so this saves once, when dragging is complete.
         DragMove();
-        DesktopAttachment.SendToBottom(Handle);
+        _host.RestackWidgets();
         SavePosition();
     }
 
@@ -427,7 +433,7 @@ public partial class FolderWindow : Window
         _keyboardMode = false;
         Keyboard.ClearFocus();
         DesktopAttachment.SetActivatable(Handle, false);
-        DesktopAttachment.SendToBottom(Handle);
+        _host.RestackWidgets();
 
         if (restoreForeground && _previousForeground != IntPtr.Zero)
         {
@@ -473,8 +479,16 @@ public partial class FolderWindow : Window
 
     // ---- Right-click menu ----
 
+    // Showing the right-click menu can lift the widget above its neighbours. Put the saved order back as the
+    // menu opens and again as it closes, so looking at the menu never changes which widget is on top.
+    private void RestackSoon() =>
+        Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new Action(_host.RestackWidgets));
+
+    private void ContextMenu_Closed(object sender, RoutedEventArgs e) => RestackSoon();
+
     private void ContextMenu_Opened(object sender, RoutedEventArgs e)
     {
+        RestackSoon();
         SizeSmallItem.IsChecked = Settings.Size == WidgetSize.Small;
         SizeMediumItem.IsChecked = Settings.Size == WidgetSize.Medium;
         SizeLargeItem.IsChecked = Settings.Size == WidgetSize.Large;
@@ -482,6 +496,7 @@ public partial class FolderWindow : Window
         CollapseItem.Header = Settings.IsCollapsed ? "Expand" : "Collapse";
         GlossItem.IsChecked = Settings.GlossEnabled;
         PluginMenu.Fill(AddPluginMenu, _host);
+        LayerMenu.Fill(LayerItem, _host, this);
     }
 
     private void Refresh_Click(object sender, RoutedEventArgs e) => LoadFolder();
@@ -536,7 +551,7 @@ public partial class FolderWindow : Window
         }
 
         DesktopAttachment.SetActivatable(Handle, false);
-        DesktopAttachment.SendToBottom(Handle);
+        _host.RestackWidgets();
     }
 
     private void NameEditor_KeyDown(object sender, KeyEventArgs e)
@@ -579,7 +594,7 @@ public partial class FolderWindow : Window
         }
 
         ApplyColor(SavedColor); // the saved choice, or back to it after Cancel
-        DesktopAttachment.SendToBottom(Handle);
+        _host.RestackWidgets();
     }
 
     /// <summary>
@@ -662,7 +677,7 @@ public partial class FolderWindow : Window
     internal void ShowOnDesktop()
     {
         Show();
-        DesktopAttachment.SendToBottom(Handle);
+        _host.RestackWidgets();
     }
 
     private void Preferences_Click(object sender, RoutedEventArgs e) => _host.ShowPreferences();

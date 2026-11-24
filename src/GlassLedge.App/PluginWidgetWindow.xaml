@@ -23,11 +23,12 @@
             MouseLeftButtonDown="Card_MouseLeftButtonDown">
 
         <Border.ContextMenu>
-            <ContextMenu Opened="ContextMenu_Opened"
+            <ContextMenu Opened="ContextMenu_Opened" Closed="ContextMenu_Closed"
                          Background="{DynamicResource BrandMenuBrush}"
                          BorderBrush="{DynamicResource BrandHairlineBrush}">
                 <MenuItem Header="Color…" Click="Color_Click" />
                 <MenuItem x:Name="GlossItem" Header="Glossy" IsCheckable="True" Click="Gloss_Click" />
+                <MenuItem x:Name="LayerItem" Header="Layer" />
                 <Separator />
                 <MenuItem Header="Remove widget" Click="Remove_Click" />
                 <Separator />
