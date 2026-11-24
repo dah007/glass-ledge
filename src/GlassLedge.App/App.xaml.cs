@@ -26,11 +26,15 @@ public partial class App : Application
     private AppSettings _settings = null!;
     private TrayIcon? _tray;
     private AboutWindow? _about;
+    private PreferencesWindow? _preferences;
 
     /// <summary>Every open widget, in the order they were created.</summary>
     internal IReadOnlyList<FolderWindow> Widgets => _widgets;
 
     internal bool WidgetsHidden => _settings.WidgetsHidden;
+
+    /// <summary>Preferences: folders open in a GlassLedge pane instead of File Explorer.</summary>
+    internal bool OpenFoldersInPane => _settings.OpenFoldersInPane;
 
     /// <summary>
     /// Average colour of the desktop wallpaper (0xFFRRGGBB), or null when it can't be read. Widgets with a
@@ -159,6 +163,52 @@ public partial class App : Application
         widget.Close();
     }
 
+    /// <summary>Opens a folder in its own GlassLedge pane window.</summary>
+    internal void OpenPane(string folder)
+    {
+        var pane = new PaneWindow(folder);
+        pane.Show();
+        pane.Activate();
+    }
+
+    /// <summary>Shows Preferences, or brings it forward if it's already open. Changes apply only on OK.</summary>
+    internal void ShowPreferences()
+    {
+        if (_preferences is not null)
+        {
+            _preferences.Activate();
+            return;
+        }
+
+        var packaged = StartupRegistration.IsPackaged;
+        var before = new PreferencesState(
+            !packaged && StartupRegistration.IsEnabled(),
+            _settings.OpenFoldersInPane,
+            _settings.AllowPlugins);
+
+        var window = new PreferencesWindow(before, packaged);
+        _preferences = window;
+        window.Closed += (_, _) => _preferences = null;
+        if (window.ShowDialog() != true)
+        {
+            return;
+        }
+
+        var after = window.Result;
+        if (!packaged && after.StartWithWindows != before.StartWithWindows && !StartupRegistration.TrySet(after.StartWithWindows))
+        {
+            MessageBox.Show(
+                "Windows wouldn't let GlassLedge change its startup setting. The other preferences were saved.",
+                "Preferences",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+        }
+
+        _settings.OpenFoldersInPane = after.OpenFoldersInPane;
+        _settings.AllowPlugins = after.AllowPlugins;
+        SaveSettings();
+    }
+
     /// <summary>Shows the About dialog, or brings it forward if it's already open.</summary>
     internal void ShowAbout()
     {
@@ -171,6 +221,14 @@ public partial class App : Application
         _about = new AboutWindow();
         _about.Closed += (_, _) => _about = null;
         _about.ShowDialog();
+    }
+
+    private void RefreshWidgetColors()
+    {
+        foreach (var widget in _widgets)
+        {
+            widget.RefreshColor();
+        }
     }
 
     internal void HideAllWidgets()
@@ -247,10 +305,7 @@ public partial class App : Application
                 {
                     WidgetTheme.Apply(Resources);
                     BrandTheme.Apply(Resources);
-                    foreach (var widget in _widgets)
-                    {
-                        widget.RefreshColor();
-                    }
+                    RefreshWidgetColors();
                 },
                 System.Windows.Threading.DispatcherPriority.ApplicationIdle);
         }
@@ -261,10 +316,7 @@ public partial class App : Application
             Dispatcher.InvokeAsync(() =>
             {
                 WallpaperColor = Wallpaper.AverageColor();
-                foreach (var widget in _widgets)
-                {
-                    widget.RefreshColor();
-                }
+                RefreshWidgetColors();
             });
         }
     }

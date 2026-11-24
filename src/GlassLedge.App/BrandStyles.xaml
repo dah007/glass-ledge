@@ -42,4 +42,95 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <!-- A preferences row that is a switch: content on the left, amber track and thumb on the right. -->
+    <Style x:Key="BrandSwitchRowStyle" TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{DynamicResource BrandTextBrush}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <Border x:Name="Row"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            BorderThickness="2"
+                            CornerRadius="10"
+                            Padding="14,12">
+                        <DockPanel>
+                            <Border x:Name="Track"
+                                    DockPanel.Dock="Right"
+                                    Width="44"
+                                    Height="24"
+                                    Margin="14,0,0,0"
+                                    VerticalAlignment="Center"
+                                    CornerRadius="12"
+                                    BorderThickness="2"
+                                    Background="Transparent"
+                                    BorderBrush="{DynamicResource BrandSecondaryTextBrush}">
+                                <Ellipse x:Name="Thumb"
+                                         Width="14"
+                                         Height="14"
+                                         Margin="3,0,0,0"
+                                         HorizontalAlignment="Left"
+                                         Fill="{DynamicResource BrandSecondaryTextBrush}" />
+                            </Border>
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </DockPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Row" Property="Background" Value="{DynamicResource BrandFooterBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Track" Property="Background" Value="{DynamicResource BrandAmberBrush}" />
+                            <Setter TargetName="Track" Property="BorderBrush" Value="{DynamicResource BrandAmberBrush}" />
+                            <Setter TargetName="Thumb" Property="HorizontalAlignment" Value="Right" />
+                            <Setter TargetName="Thumb" Property="Margin" Value="0,0,3,0" />
+                            <Setter TargetName="Thumb" Property="Fill" Value="{DynamicResource BrandOnAmberBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource BrandFocusBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Row" Property="Opacity" Value="0.55" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- The dialogs' secondary button: outlined, graphite or white text. -->
+    <Style x:Key="BrandSecondaryButtonStyle" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource BrandTextBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BrandSecondaryTextBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="16,5" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource BrandFooterBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource BrandFocusBrush}" />
+                            <Setter TargetName="Root" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

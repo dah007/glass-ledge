@@ -215,6 +215,7 @@ public partial class FolderWindow : Window
             {
                 Label = entry.Name,
                 TargetPath = entry.FullPath,
+                IsFolder = entry.IsDirectory,
                 Icon = ShellIcons.GetIcon(entry.FullPath),
                 AccessibleName = TileAccessibility.NameFor(entry),
             })
@@ -226,6 +227,7 @@ public partial class FolderWindow : Window
             {
                 Label = "More",
                 TargetPath = path,
+                IsFolder = true,
                 OverflowText = "+" + contents.OverflowCount.ToString(CultureInfo.CurrentCulture),
                 AccessibleName = TileAccessibility.OverflowName(contents.OverflowCount),
             });
@@ -260,7 +262,7 @@ public partial class FolderWindow : Window
             }
             else if (TileFrom(e.OriginalSource) is { } tile)
             {
-                Open(tile.TargetPath, tile.Label);
+                OpenTile(tile);
             }
 
             return;
@@ -320,6 +322,18 @@ public partial class FolderWindow : Window
         Settings.Left = Left;
         Settings.Top = Top;
         _host.SaveSettings();
+    }
+
+    /// <summary>A tile was opened: a folder goes to a GlassLedge pane when Preferences says so, anything else to Windows.</summary>
+    private void OpenTile(TileViewModel tile)
+    {
+        if (tile.IsFolder && _host.OpenFoldersInPane)
+        {
+            _host.OpenPane(tile.TargetPath);
+            return;
+        }
+
+        Open(tile.TargetPath, tile.Label);
     }
 
     private void Open(string path, string displayName)
@@ -428,7 +442,7 @@ public partial class FolderWindow : Window
     {
         if (sender is FrameworkElement { DataContext: TileViewModel tile })
         {
-            Open(tile.TargetPath, tile.Label);
+            OpenTile(tile);
         }
     }
 
@@ -649,6 +663,8 @@ public partial class FolderWindow : Window
         Show();
         DesktopAttachment.SendToBottom(Handle);
     }
+
+    private void Preferences_Click(object sender, RoutedEventArgs e) => _host.ShowPreferences();
 
     private void About_Click(object sender, RoutedEventArgs e) => _host.ShowAbout();
 

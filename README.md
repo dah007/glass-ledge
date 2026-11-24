@@ -95,6 +95,7 @@ copied over automatically on first launch (the old settings folder is left untou
 | Rename a widget | Right-click > **Rename**, type, press Enter (Esc cancels). Clear the name to go back to the folder's name. |
 | Give a widget its own color | Right-click > **Color…**: pick a hue, shade and opacity (or type a hex value, or click a preset). **Default** returns to the Windows light/dark color. Text turns black or white automatically to stay readable against the color and your wallpaper, and the border takes a shade of the color. |
 | Turn the glossy look on or off | Right-click > **Glossy** (on by default) |
+| Start with Windows, open folders in a pane (double-click a folder tile; Back and Up inside the pane) | Right-click a widget or the tray icon > **Preferences…**, then **OK** (Cancel discards) |
 | See the version, or find the author's GitHub, LinkedIn and Buy Me a Coffee pages | Right-click a widget or the tray icon > **About** |
 | Change folder, size (Small / Medium / Large / Extra large), add, remove, exit | Right-click the widget |
 
@@ -107,7 +108,7 @@ The app runs in the notification area (next to the clock), even with no widgets.
 | Action | How |
 | --- | --- |
 | Hide or show every widget | Left-click the tray icon. Hidden widgets stay hidden after a restart. |
-| Add widget, Go to widget (pick one), Close widget (pick one), Hide all, Show all, About, Exit | Right-click the tray icon |
+| Add widget, Go to widget (pick one), Close widget (pick one), Hide all, Show all, Preferences, About, Exit | Right-click the tray icon |
 
 ### Keyboard and screen readers
 
@@ -129,7 +130,7 @@ In the color picker, Tab to the square or a bar and use the arrow keys (Shift or
 ## Settings
 
 Saved as JSON at `%APPDATA%\GlassLedge\settings.json`: one entry per widget
-with its folder, position, size, collapsed state, custom name, color and glossy setting, plus whether
+with its folder, position, size, collapsed state, custom name, color and glossy setting, the Preferences choices, plus whether
 widgets are currently hidden. Uninstalling keeps this file.
 
 ## Development Guide
