@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The plugin contract: the few types a GlassLedge plugin compiles against. GlassLedge itself references
+    this project and plugins reference it too (without copying it), so both sides share one copy.
+    Keep it small and stable; a breaking change means raising PluginApiInfo.Version.
+    Full reference: docs/plugins/api.md
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>GlassLedge.PluginApi</RootNamespace>
+    <AssemblyName>GlassLedge.PluginApi</AssemblyName>
+    <Description>The plugin contract for GlassLedge widgets.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+</Project>

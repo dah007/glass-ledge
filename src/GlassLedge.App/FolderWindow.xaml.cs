@@ -481,6 +481,7 @@ public partial class FolderWindow : Window
         SizeExtraLargeItem.IsChecked = Settings.Size == WidgetSize.ExtraLarge;
         CollapseItem.Header = Settings.IsCollapsed ? "Expand" : "Collapse";
         GlossItem.IsChecked = Settings.GlossEnabled;
+        PluginMenu.Fill(AddPluginMenu, _host);
     }
 
     private void Refresh_Click(object sender, RoutedEventArgs e) => LoadFolder();

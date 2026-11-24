@@ -104,6 +104,7 @@
                 </MenuItem>
                 <Separator />
                 <MenuItem Header="Add widget…" Click="AddWidget_Click" />
+                <MenuItem x:Name="AddPluginMenu" Header="Add plugin widget" />
                 <MenuItem Header="Remove widget" Click="RemoveWidget_Click" />
                 <Separator />
                 <MenuItem Header="Preferences…" Click="Preferences_Click" />

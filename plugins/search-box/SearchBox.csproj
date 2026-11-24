@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    GlassLedge plugin: Search box. This is the reference example; copy this folder to start your own.
+    Everything a plugin project needs is on this page:
+
+      1. It is a class library (the default) that targets the same framework as GlassLedge, with WPF,
+         because a plugin builds its widget contents out of WPF controls.
+      2. EnableDynamicLoading marks it as a plugin: its dependencies are copied beside it, a .deps.json
+         is written, and the shared framework is left out.
+      3. It references GlassLedge.PluginApi for compiling only (Private=false). GlassLedge supplies the
+         real copy when it runs, so plugin and app agree on the same types. If the plugin brought its own
+         copy, the two would not match and the plugin would fail to load.
+      4. plugin.json is copied next to the built .dll; the folder holding both is the plugin.
+
+    Full guide: docs/plugins/getting-started.md
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <AssemblyName>SearchBox</AssemblyName>
+    <RootNamespace>GlassLedge.Plugins.SearchBox</RootNamespace>
+    <Description>A search box widget: type, press Search, and the web search opens in your browser.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\GlassLedge.PluginApi\GlassLedge.PluginApi.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Lets tests/GlassLedge.Plugins.Tests reach the plugin's internal classes. -->
+    <InternalsVisibleTo Include="GlassLedge.Plugins.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="plugin.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!--
+    Staging, for plugins that ship with GlassLedge: after building, copy this plugin's files to
+    artifacts/plugins/<configuration>/<plugin id>/. The app project picks the staged folders up and puts them
+    in its own plugins folder (see src/GlassLedge.App/GlassLedge.App.csproj). A plugin you build for yourself
+    doesn't need this target: just copy the build output folder into %APPDATA%\GlassLedge\plugins\<id>.
+  -->
+  <Target Name="StageForGlassLedge" AfterTargets="Build">
+    <ItemGroup>
+      <_PluginFile Include="$(OutDir)SearchBox.dll;$(OutDir)SearchBox.deps.json;$(OutDir)SearchBox.xml;$(OutDir)plugin.json" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_PluginFile)"
+          DestinationFolder="$(MSBuildThisFileDirectory)..\..\artifacts\plugins\$(Configuration)\search-box\"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

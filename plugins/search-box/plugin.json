@@ -1,0 +1,26 @@
+// The plugin's manifest. GlassLedge reads this file (and only this file) to learn about the plugin
+// before running any of its code. Comments and trailing commas are allowed.
+// Every field is explained in docs/plugins/manifest.md.
+{
+  // Lower-case letters, digits and single hyphens. Must be the same as this folder's name.
+  "id": "search-box",
+
+  // What GlassLedge's "Add plugin widget" menu calls it.
+  "name": "Search box",
+
+  // The plugin's own version.
+  "version": "1.0.0",
+
+  "description": "Type, press Search, and the web search opens in your browser.",
+  "author": "dah007",
+
+  // The plugin contract this plugin was written for. GlassLedge refuses newer ones than it knows.
+  "apiVersion": 1,
+
+  // The built assembly, in this folder, and the class in it that implements IWidgetPlugin.
+  "entry": "SearchBox.dll",
+  "entryType": "GlassLedge.Plugins.SearchBox.SearchBoxPlugin",
+
+  // The size of the widget's contents. GlassLedge adds its own glass around this.
+  "size": { "width": 320, "height": 40 },
+}

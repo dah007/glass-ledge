@@ -15,7 +15,10 @@
 | --- | --- | --- |
 | `src/GlassLedge.App` | `net10.0-windows` (WPF) | Widget windows, desktop pinning, glossy glass, wallpaper color sampling, shell icons, tray icon, color picker, About dialog |
 | `src/GlassLedge.Core` | `net10.0` | Settings, widget sizes and layout, theme and adaptive glass palette, color math, folder listing |
+| `src/GlassLedge.PluginApi` | `net10.0-windows` | The plugin contract (`IWidgetPlugin`, `IWidgetContext`, `PluginTheme`). The only project a plugin references. See [docs/plugins](docs/plugins/README.md) |
+| `plugins/<name>` | `net10.0-windows` | One folder per plugin. `search-box` is the reference example. Built and staged by the app build |
 | `tests/GlassLedge.Tests` | `net10.0` (xUnit) | Unit tests for Core |
+| `tests/GlassLedge.Plugins.Tests` | `net10.0-windows` (xUnit) | Tests for the plugins in `./plugins`, using a fake widget context |
 | `tests/GlassLedge.AppTests` | `net10.0-windows` (xUnit) | Unit tests for App-layer pure logic (`WidgetTheme`) |
 | `tests/GlassLedge.TestSupport` | `net10.0` | Shared helpers for Smoke/E2E: launching an isolated app instance, locating the built exe |
 | `tests/GlassLedge.Smoke` | `net10.0` (xUnit) | Launches the real built app; checks it starts/exits without crashing |

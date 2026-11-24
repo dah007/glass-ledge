@@ -20,4 +20,7 @@ public sealed class AppSettings
 
     /// <summary>Preferences: plugin code may run. Off by default, because a plugin is a program.</summary>
     public bool AllowPlugins { get; set; }
+
+    /// <summary>The plugin widgets the person added (position, colour, gloss). Kept even while plugins are off.</summary>
+    public List<PluginWidgetSettings> PluginWidgets { get; set; } = [];
 }
