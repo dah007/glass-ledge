@@ -95,7 +95,8 @@ copied over automatically on first launch (the old settings folder is left untou
 | Rename a widget | Right-click > **Rename**, type, press Enter (Esc cancels). Clear the name to go back to the folder's name. |
 | Give a widget its own color | Right-click > **Color…**: pick a hue, shade and opacity (or type a hex value, or click a preset). **Default** returns to the Windows light/dark color. Text turns black or white automatically to stay readable against the color and your wallpaper, and the border takes a shade of the color. |
 | Turn the glossy look on or off | Right-click > **Glossy** (on by default) |
-| Start with Windows, open folders in a pane (double-click a folder tile; Back and Up inside the pane) | Right-click a widget or the tray icon > **Preferences…**, then **OK** (Cancel discards) |
+| Search the web from the desktop | Turn on **Preferences… > Allow plugins**, then right-click a widget or the tray icon > **Add plugin widget** > **Search box**. Type, then press **Search** or Enter; the results open in your browser. It takes **Color…** and **Glossy** like any widget |
+| Start with Windows, open folders in a pane (double-click a folder tile; Back and Up inside the pane), allow plugins | Right-click a widget or the tray icon > **Preferences…**, then **OK** (Cancel discards) |
 | See the version, or find the author's GitHub, LinkedIn and Buy Me a Coffee pages | Right-click a widget or the tray icon > **About** |
 | Change folder, size (Small / Medium / Large / Extra large), add, remove, exit | Right-click the widget |
 
@@ -108,7 +109,7 @@ The app runs in the notification area (next to the clock), even with no widgets.
 | Action | How |
 | --- | --- |
 | Hide or show every widget | Left-click the tray icon. Hidden widgets stay hidden after a restart. |
-| Add widget, Go to widget (pick one), Close widget (pick one), Hide all, Show all, Preferences, About, Exit | Right-click the tray icon |
+| Add widget, Add plugin widget, Go to widget (pick one), Close widget (pick one), Hide all, Show all, Preferences, About, Exit | Right-click the tray icon |
 
 ### Keyboard and screen readers
 
@@ -127,10 +128,18 @@ Everything can be done without a mouse. Widgets sit on the desktop and never tak
 
 In the color picker, Tab to the square or a bar and use the arrow keys (Shift or Page Up/Down for bigger steps); the hex box and presets work as usual. Screen readers announce each item by name ("Invoices, folder"), the item count, and the picker's sliders with their values. In Windows High Contrast the widgets use your system colors and drop the glass effects, and with **Transparency effects** turned off they turn solid.
 
+## Plugins
+
+GlassLedge can show plugin widgets: GlassLedge draws the glass, the plugin supplies what is inside. The first plugin is the **Search box**, and it is also the worked example for writing your own.
+
+- **Use them:** Preferences > **Allow plugins** (off by default; a plugin is a program, so only add ones you trust), then **Add plugin widget**.
+- **Where they live:** every plugin is in [`plugins/<plugin-name>`](plugins/README.md) in this repository, ships to `plugins\` beside the app, and your own go in `%APPDATA%\GlassLedge\plugins`.
+- **Write one:** [docs/plugins/getting-started.md](docs/plugins/getting-started.md), then the [manifest](docs/plugins/manifest.md), [API](docs/plugins/api.md), [theming](docs/plugins/theming.md), [security](docs/plugins/security.md), [troubleshooting](docs/plugins/troubleshooting.md) and [architecture](docs/plugins/architecture.md) pages. Start from [`plugins/search-box`](plugins/search-box/README.md).
+
 ## Settings
 
 Saved as JSON at `%APPDATA%\GlassLedge\settings.json`: one entry per widget
-with its folder, position, size, collapsed state, custom name, color and glossy setting, the Preferences choices, plus whether
+with its folder, position, size, collapsed state, custom name, color and glossy setting, one entry per plugin widget (plugin, position, color, glossy), the Preferences choices, plus whether
 widgets are currently hidden. Uninstalling keeps this file.
 
 ## Development Guide

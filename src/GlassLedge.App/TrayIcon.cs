@@ -11,7 +11,7 @@ namespace GlassLedge.App;
 
 /// <summary>
 /// The notification-area icon. Left-click hides or shows every widget; right-click (or the Menu key) opens a
-/// themed WPF menu: Add widget, Go to widget (moves keyboard focus to a widget), Close widget, Hide all,
+/// themed WPF menu: Add widget, Add plugin widget, Go to widget (moves keyboard focus to a widget), Close widget, Hide all,
 /// Show all, Preferences, About, Exit.
 /// </summary>
 internal sealed class TrayIcon : IDisposable
@@ -21,6 +21,7 @@ internal sealed class TrayIcon : IDisposable
     private readonly App _app;
     private readonly Forms.NotifyIcon _notifyIcon;
     private readonly ContextMenu _menu;
+    private readonly MenuItem _addPluginItem = new() { Header = "Add plugin widget" };
     private readonly MenuItem _goToWidgetItem;
     private readonly MenuItem _closeWidgetItem;
     private readonly MenuItem _hideAllItem;
@@ -39,6 +40,7 @@ internal sealed class TrayIcon : IDisposable
         _menu.SetResourceReference(Control.BackgroundProperty, BrandTheme.MenuBrushKey);
         _menu.SetResourceReference(Control.BorderBrushProperty, BrandTheme.HairlineBrushKey);
         _menu.Items.Add(MenuEntry("Add widget…", (_, _) => _app.AddWidget()));
+        _menu.Items.Add(_addPluginItem);
         _menu.Items.Add(_goToWidgetItem);
         _menu.Items.Add(_closeWidgetItem);
         _menu.Items.Add(new Separator());
@@ -96,6 +98,7 @@ internal sealed class TrayIcon : IDisposable
     private void UpdateMenu()
     {
         var widgets = _app.Widgets;
+        var pluginWindows = _app.Plugins.Windows;
 
         _goToWidgetItem.Items.Clear();
         _closeWidgetItem.Items.Clear();
@@ -107,10 +110,21 @@ internal sealed class TrayIcon : IDisposable
             _closeWidgetItem.Items.Add(MenuEntry(labels[i], (_, _) => _app.ConfirmAndRemoveWidget(widget)));
         }
 
+        var pluginLabels = _app.Plugins.MenuLabels();
+        for (var i = 0; i < pluginWindows.Count; i++)
+        {
+            var window = pluginWindows[i];
+            _goToWidgetItem.Items.Add(MenuEntry(pluginLabels[i], (_, _) => window.FocusFromKeyboard()));
+            _closeWidgetItem.Items.Add(MenuEntry(pluginLabels[i], (_, _) => _app.Plugins.Remove(window)));
+        }
+
+        PluginMenu.Fill(_addPluginItem, _app);
+
         // Moving keyboard focus to a hidden widget would show nothing, so it waits for "Show all".
-        _goToWidgetItem.IsEnabled = widgets.Count > 0 && !_app.WidgetsHidden;
-        _closeWidgetItem.IsEnabled = widgets.Count > 0;
-        _hideAllItem.IsEnabled = widgets.Count > 0 && !_app.WidgetsHidden;
+        var any = widgets.Count + pluginWindows.Count > 0;
+        _goToWidgetItem.IsEnabled = any && !_app.WidgetsHidden;
+        _closeWidgetItem.IsEnabled = any;
+        _hideAllItem.IsEnabled = any && !_app.WidgetsHidden;
         _showAllItem.IsEnabled = _app.WidgetsHidden;
     }
 

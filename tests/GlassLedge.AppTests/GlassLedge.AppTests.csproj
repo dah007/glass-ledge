@@ -21,6 +21,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\GlassLedge.Core\GlassLedge.Core.csproj" />
     <ProjectReference Include="..\..\src\GlassLedge.App\GlassLedge.App.csproj" />
+    <ProjectReference Include="..\..\src\GlassLedge.PluginApi\GlassLedge.PluginApi.csproj" />
+    <ProjectReference Include="..\GlassLedge.TestSupport\GlassLedge.TestSupport.csproj" />
   </ItemGroup>
 
 </Project>

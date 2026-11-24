@@ -2,10 +2,15 @@
   <Folder Name="/src/">
     <Project Path="src/GlassLedge.App/GlassLedge.App.csproj" />
     <Project Path="src/GlassLedge.Core/GlassLedge.Core.csproj" />
+    <Project Path="src/GlassLedge.PluginApi/GlassLedge.PluginApi.csproj" />
+  </Folder>
+  <Folder Name="/plugins/">
+    <Project Path="plugins/search-box/SearchBox.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/GlassLedge.Tests/GlassLedge.Tests.csproj" />
     <Project Path="tests/GlassLedge.AppTests/GlassLedge.AppTests.csproj" />
+    <Project Path="tests/GlassLedge.Plugins.Tests/GlassLedge.Plugins.Tests.csproj" />
     <Project Path="tests/GlassLedge.TestSupport/GlassLedge.TestSupport.csproj" />
     <Project Path="tests/GlassLedge.Smoke/GlassLedge.Smoke.csproj" />
     <Project Path="tests/GlassLedge.E2E/GlassLedge.E2E.csproj" />

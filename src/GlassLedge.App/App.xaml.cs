@@ -31,6 +31,16 @@ public partial class App : Application
     /// <summary>Every open widget, in the order they were created.</summary>
     internal IReadOnlyList<FolderWindow> Widgets => _widgets;
 
+    /// <summary>The settings document, shared with the plugin manager.</summary>
+    internal AppSettings Settings => _settings;
+
+    /// <summary>Finds plugins and owns their widgets.</summary>
+    internal PluginManager Plugins => _plugins ??= new PluginManager(this);
+    private PluginManager? _plugins;
+
+    /// <summary>Shows a Windows notification next to the tray icon, if the tray exists yet.</summary>
+    internal void Notify(string message) => _tray?.ShowNotification(message);
+
     internal bool WidgetsHidden => _settings.WidgetsHidden;
 
     /// <summary>Preferences: folders open in a GlassLedge pane instead of File Explorer.</summary>
@@ -77,13 +87,16 @@ public partial class App : Application
             CreateWidget(widgetSettings);
         }
 
+        // Plugin widgets come back only when Preferences > Allow plugins is on.
+        Plugins.Start(_settings.AllowPlugins);
+
         // Only the very first run asks for a folder; someone who removed every widget isn't nagged at each sign-in.
         if (isFirstRun && _settings.Windows.Count == 0)
         {
             AddWidget();
         }
 
-        if (_widgets.Count == 0)
+        if (_widgets.Count == 0 && Plugins.Windows.Count == 0)
         {
             _tray.ShowNotification("Running in the notification area. Right-click the icon to add a widget.");
         }
@@ -207,6 +220,7 @@ public partial class App : Application
         _settings.OpenFoldersInPane = after.OpenFoldersInPane;
         _settings.AllowPlugins = after.AllowPlugins;
         SaveSettings();
+        Plugins.SetEnabled(after.AllowPlugins);
     }
 
     /// <summary>Shows the About dialog, or brings it forward if it's already open.</summary>
@@ -229,6 +243,8 @@ public partial class App : Application
         {
             widget.RefreshColor();
         }
+
+        Plugins.RefreshColors();
     }
 
     internal void HideAllWidgets()
@@ -239,6 +255,8 @@ public partial class App : Application
         {
             widget.Hide();
         }
+
+        Plugins.HideAll();
     }
 
     internal void ShowAllWidgets()
@@ -249,6 +267,8 @@ public partial class App : Application
         {
             widget.ShowOnDesktop();
         }
+
+        Plugins.ShowAll();
     }
 
     internal void ToggleWidgetsHidden()
@@ -257,7 +277,7 @@ public partial class App : Application
         {
             ShowAllWidgets();
         }
-        else if (_widgets.Count > 0)
+        else if (_widgets.Count > 0 || Plugins.Windows.Count > 0)
         {
             HideAllWidgets();
         }

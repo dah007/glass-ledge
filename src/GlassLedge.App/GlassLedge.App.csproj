@@ -38,6 +38,41 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GlassLedge.Core\GlassLedge.Core.csproj" />
+    <ProjectReference Include="..\GlassLedge.PluginApi\GlassLedge.PluginApi.csproj" />
   </ItemGroup>
+
+  <!--
+    Plugins shipped with the app. Each one is built from ./plugins/<name> and staged (see the plugin's own
+    project) in artifacts/plugins/<configuration>/<name>. The references below only make sure they are built
+    first; GlassLedge never links to them. The two targets then put the staged files in a "plugins" folder
+    beside the executable, for a normal build and for publish (installer and Store package). To ship another
+    plugin, add one ProjectReference line here.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\plugins\search-box\SearchBox.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <StagedPluginsDir>$(MSBuildThisFileDirectory)..\..\artifacts\plugins\$(Configuration)\</StagedPluginsDir>
+  </PropertyGroup>
+
+  <Target Name="CopyShippedPluginsToOutput" AfterTargets="CopyFilesToOutputDirectory">
+    <ItemGroup>
+      <_StagedPluginFile Include="$(StagedPluginsDir)**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_StagedPluginFile)"
+          DestinationFiles="@(_StagedPluginFile->'$(OutDir)plugins\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="AddShippedPluginsToPublish" BeforeTargets="ComputeResolvedFilesToPublishList">
+    <ItemGroup>
+      <_StagedPluginPublishFile Include="$(StagedPluginsDir)**\*" />
+      <ResolvedFileToPublish Include="@(_StagedPluginPublishFile)">
+        <RelativePath>plugins\%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
 
 </Project>
