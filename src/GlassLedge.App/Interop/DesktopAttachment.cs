@@ -39,6 +39,18 @@ internal static class DesktopAttachment
         NativeMethods.SetWindowLongPtr(hwnd, NativeMethods.GwlExStyle, new IntPtr(exStyle));
     }
 
+    /// <summary>
+    /// Puts the window in the topmost layer: above every normal window, apps included, and above the widgets
+    /// that aren't pinned. Among topmost windows the one placed last is in front. Sending a window to the
+    /// bottom again (<see cref="SendToBottom"/>) takes it out of this layer.
+    /// </summary>
+    public static void BringToTopmost(IntPtr hwnd) =>
+        NativeMethods.SetWindowPos(
+            hwnd,
+            NativeMethods.HwndTopmost,
+            0, 0, 0, 0,
+            NativeMethods.SwpNoMove | NativeMethods.SwpNoSize | NativeMethods.SwpNoActivate);
+
     public static void SendToBottom(IntPtr hwnd) =>
         NativeMethods.SetWindowPos(
             hwnd,

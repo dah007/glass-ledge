@@ -129,6 +129,64 @@ public sealed class WidgetStackingTests
         Assert.Equal([A, B], WidgetStacking.Normalize([A, A, B, B], [A, B]));
     }
 
+    private static StackedWidget Pinned(Guid id, double left) => new(id, new ScreenRect(left, 0, 100, 100), AlwaysOnTop: true);
+
+    [Fact]
+    public void Move_OnlyReordersWithinTheSameLayer()
+    {
+        // A and B are normal, C is pinned. Sending C backward has nothing pinned to go behind.
+        var stack = new List<StackedWidget> { At(A, 0), At(B, 50), Pinned(C, 100) };
+
+        Assert.False(WidgetStacking.CanMove(stack, C, LayerMove.Backward));
+        Assert.False(WidgetStacking.CanMove(stack, C, LayerMove.ToBack));
+        Assert.False(WidgetStacking.CanMove(stack, B, LayerMove.ToFront)); // already in front of the normal widgets
+        Assert.False(WidgetStacking.CanMove(stack, B, LayerMove.Forward)); // C overlaps but is in another layer
+    }
+
+    [Fact]
+    public void Move_AmongPinnedWidgets_WorksLikeAmongNormalOnes()
+    {
+        var stack = new List<StackedWidget> { Pinned(A, 0), Pinned(B, 50) };
+
+        Assert.Equal([B, A], WidgetStacking.Move(stack, A, LayerMove.Forward));
+    }
+
+    [Fact]
+    public void Move_KeepsNormalWidgetsBeforePinnedOnes()
+    {
+        // Bringing the normal widget A to the front puts it in front of B but still behind pinned C.
+        var stack = new List<StackedWidget> { At(A, 0), At(B, 50), Pinned(C, 100) };
+
+        Assert.Equal([B, A, C], WidgetStacking.Move(stack, A, LayerMove.ToFront));
+    }
+
+    [Fact]
+    public void Move_ListsNormalWidgetsBeforePinnedEvenIfTheInputDidNot()
+    {
+        var stack = new List<StackedWidget> { Pinned(A, 0), At(B, 50), Pinned(C, 100), At(D, 150) };
+
+        Assert.Equal([D, B, A, C], WidgetStacking.Move(stack, B, LayerMove.ToFront));
+    }
+
+    [Fact]
+    public void AlwaysOnTop_IsOffByDefaultAndRoundTripsThroughTheSettingsFile()
+    {
+        Assert.False(new FolderWindowSettings().AlwaysOnTop);
+        Assert.False(new PluginWidgetSettings().AlwaysOnTop);
+
+        using var temp = new GlassLedge.TestSupport.TempDirectory();
+        var store = new JsonSettingsStore(temp.Combine("settings.json"));
+        store.Save(new AppSettings
+        {
+            Windows = [new FolderWindowSettings { AlwaysOnTop = true }],
+            PluginWidgets = [new PluginWidgetSettings { AlwaysOnTop = true }],
+        });
+
+        var loaded = store.Load();
+        Assert.True(loaded.Windows[0].AlwaysOnTop);
+        Assert.True(loaded.PluginWidgets[0].AlwaysOnTop);
+    }
+
     [Fact]
     public void LayerOrder_RoundTripsThroughTheSettingsFile()
     {

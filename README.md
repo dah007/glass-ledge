@@ -88,7 +88,7 @@ copied over automatically on first launch (the old settings folder is left untou
 | Action | How |
 | --- | --- |
 | Move a widget | Drag anywhere on it. Its position is saved when you let go. |
-| Choose which widget is on top when they overlap | Right-click a widget > **Layer** > **Bring to front**, **Bring forward**, **Send backward** or **Send to back**. Forward and backward step past the nearest widget it overlaps, so each use changes what you see; items that wouldn't change anything are greyed out. The order is remembered, and it works for plugin widgets too |
+| Choose which widget is on top when they overlap | Right-click a widget > **Layer** > **Bring to front**, **Bring forward**, **Send backward** or **Send to back**. Tick **Always on top** to keep a widget above every window, apps included (pinned widgets stack among themselves with the same items). Forward and backward step past the nearest widget it overlaps, so each use changes what you see; items that wouldn't change anything are greyed out. The order is remembered, and it works for plugin widgets too |
 | Open a file or folder | Double-click its icon |
 | See items that don't fit | Double-click the **+N** tile (opens the folder in File Explorer) |
 | Collapse to just the title row, or expand again | Double-click the title row, or right-click > **Collapse** / **Expand** |

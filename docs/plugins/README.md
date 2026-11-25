@@ -19,7 +19,7 @@ The first plugin, the **Search box**, is also the worked example: [`plugins/sear
 
 1. Right-click a widget or the tray icon and choose **Preferences…**. Turn on **Allow plugins** and press **OK**. It is off by default, because a plugin is a program (see [security.md](security.md)). It takes effect straight away; no restart.
 2. Right-click a widget or the tray icon, then **Add plugin widget** and pick one, for example **Search box**.
-3. Right-click the new widget for **Color…**, **Glossy**, **Layer** (bring to front, send to back and so on) and **Remove widget**. These work the same as on a folder widget, and they are the app's, so every plugin gets them.
+3. Right-click the new widget for **Color…**, **Glossy**, **Layer** (bring to front, send to back, always on top and so on) and **Remove widget**. These work the same as on a folder widget, and they are the app's, so every plugin gets them.
 
 Drag a plugin widget by its glass (anything that isn't a control). Where it sits, its colour and its glossy setting are remembered.
 

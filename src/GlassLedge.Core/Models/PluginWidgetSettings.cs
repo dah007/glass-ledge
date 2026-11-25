@@ -20,4 +20,7 @@ public sealed class PluginWidgetSettings
     public string? BackgroundColor { get; set; }
 
     public bool GlossEnabled { get; set; } = true;
+
+    /// <summary>Pinned above every window, including apps (Layer > Always on top).</summary>
+    public bool AlwaysOnTop { get; set; }
 }

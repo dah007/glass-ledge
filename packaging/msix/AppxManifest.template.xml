@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Package manifest for the Microsoft Store (MSIX) build of GlassLedge.
-  build/build-msix.ps1 fills the {{...}} tokens, so don't edit the generated copy in artifacts\msix.
+  build/build-msix.ps1 fills in the placeholder tokens (IdentityName, Publisher, PublisherDisplayName, Version), so don't edit the generated copy in artifacts\msix.
   The identity values come from Partner Center (Product identity); see packaging/README.md.
 -->
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"

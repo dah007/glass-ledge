@@ -96,6 +96,12 @@ public partial class FolderWindow : Window, ILayeredWidget
 
     IntPtr ILayeredWidget.LayerHandle => Handle;
 
+    bool ILayeredWidget.AlwaysOnTop
+    {
+        get => Settings.AlwaysOnTop;
+        set => Settings.AlwaysOnTop = value;
+    }
+
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
