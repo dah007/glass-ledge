@@ -1,6 +1,7 @@
 {
   "_comment": "Paste the values from Partner Center > your app > Product management > Product identity. While these still say REPLACE, build-msix.ps1 only makes a local test package.",
-  "identityName": "REPLACE-with-Package-Identity-Name",
-  "publisher": "CN=REPLACE-with-Package-Identity-Publisher",
-  "publisherDisplayName": "REPLACE-with-Publisher-display-name"
+  "identityName": "dah.apps.GlassLedge",
+  "publisher": "CN=2ECBB341-0C61-4E7A-A655-648FB35C8AEA",
+  "publisherDisplayName": "dah.apps",
+  "version": "v0.7.0.0"
 }

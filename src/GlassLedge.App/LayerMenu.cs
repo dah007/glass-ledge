@@ -18,6 +18,17 @@ internal static class LayerMenu
         Add(parent, "Bring forward", LayerMove.Forward, app, widget);
         Add(parent, "Send backward", LayerMove.Backward, app, widget);
         Add(parent, "Send to back", LayerMove.ToBack, app, widget);
+
+        parent.Items.Add(new Separator());
+        var pin = new MenuItem
+        {
+            Header = "Always on top",
+            IsCheckable = true,
+            IsChecked = widget.AlwaysOnTop,
+            ToolTip = "Keep this widget above every window, including apps",
+        };
+        pin.Click += (_, _) => app.Layers.SetAlwaysOnTop(widget, !widget.AlwaysOnTop);
+        parent.Items.Add(pin);
     }
 
     private static void Add(MenuItem parent, string header, LayerMove move, App app, ILayeredWidget widget)

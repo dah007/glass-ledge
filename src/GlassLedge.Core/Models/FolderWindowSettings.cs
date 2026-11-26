@@ -33,4 +33,7 @@ public sealed class FolderWindowSettings
     /// sheen is drawn over the widget. The sheen never takes mouse input.
     /// </summary>
     public bool GlossEnabled { get; set; } = true;
+
+    /// <summary>Pinned above every window, including apps (Layer > Always on top).</summary>
+    public bool AlwaysOnTop { get; set; }
 }

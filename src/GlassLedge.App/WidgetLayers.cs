@@ -15,6 +15,9 @@ public interface ILayeredWidget
 
     /// <summary>The window handle, or zero before the window has been shown.</summary>
     IntPtr LayerHandle { get; }
+
+    /// <summary>True when the widget is pinned above every window (kept in its settings).</summary>
+    bool AlwaysOnTop { get; set; }
 }
 
 /// <summary>
@@ -31,15 +34,33 @@ internal sealed class WidgetLayers(App app)
     {
         var order = CurrentOrder(out var widgets);
 
-        // Sending to the bottom front-to-back leaves the last one sent, the back widget, lowest.
+        // Normal widgets: sending to the bottom front-to-back leaves the last one sent, the back widget, lowest.
         foreach (var id in order.Reverse())
         {
-            var handle = widgets[id].LayerHandle;
-            if (handle != IntPtr.Zero)
+            var widget = widgets[id];
+            if (!widget.AlwaysOnTop && widget.LayerHandle != IntPtr.Zero)
             {
-                DesktopAttachment.SendToBottom(handle);
+                DesktopAttachment.SendToBottom(widget.LayerHandle);
             }
         }
+
+        // Pinned widgets: placing in the topmost layer back-to-front leaves the last one placed in front.
+        foreach (var id in order)
+        {
+            var widget = widgets[id];
+            if (widget.AlwaysOnTop && widget.LayerHandle != IntPtr.Zero)
+            {
+                DesktopAttachment.BringToTopmost(widget.LayerHandle);
+            }
+        }
+    }
+
+    /// <summary>Pins the widget above every window, or lets it go back to the desktop layer. Saved at once.</summary>
+    internal void SetAlwaysOnTop(ILayeredWidget widget, bool alwaysOnTop)
+    {
+        widget.AlwaysOnTop = alwaysOnTop;
+        app.SaveSettings();
+        Restack();
     }
 
     internal bool CanMove(ILayeredWidget widget, LayerMove move) =>
@@ -62,7 +83,7 @@ internal sealed class WidgetLayers(App app)
     private List<StackedWidget> Snapshot()
     {
         var order = CurrentOrder(out var widgets);
-        return order.Select(id => new StackedWidget(id, widgets[id].Bounds)).ToList();
+        return order.Select(id => new StackedWidget(id, widgets[id].Bounds, widgets[id].AlwaysOnTop)).ToList();
     }
 
     private IReadOnlyList<Guid> CurrentOrder(out Dictionary<Guid, ILayeredWidget> widgets)

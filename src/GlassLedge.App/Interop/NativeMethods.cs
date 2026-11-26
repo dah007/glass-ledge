@@ -11,6 +11,7 @@ internal static class NativeMethods
     internal const long WsExNoActivate = 0x08000000;
 
     internal static readonly IntPtr HwndBottom = new(1);
+    internal static readonly IntPtr HwndTopmost = new(-1);
 
     internal const uint SwpNoSize = 0x0001;
     internal const uint SwpNoMove = 0x0002;

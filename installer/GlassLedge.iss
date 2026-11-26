@@ -8,7 +8,7 @@
 #define AppExeName "GlassLedge.exe"
 
 #ifndef AppVersion
-  #define AppVersion "0.5.0"
+  #define AppVersion "0.7.0"
 #endif
 
 #ifndef PublishDir
