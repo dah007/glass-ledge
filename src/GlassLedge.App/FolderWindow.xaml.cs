@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 using GlassLedge.App.Interop;
 using GlassLedge.Core.Models;
 using GlassLedge.Core.Services;
@@ -509,7 +510,11 @@ public partial class FolderWindow : Window, ILayeredWidget
 
     // ---- Rename (in place, in the title row) ----
 
-    private void Rename_Click(object sender, RoutedEventArgs e) => BeginRename();
+    // Start renaming once the context menu has finished closing. Closing the menu hands keyboard focus back
+    // to whatever had it, and doing that after BeginRename gave the box focus made it lose focus at once,
+    // which ended the rename before anything could be typed.
+    private void Rename_Click(object sender, RoutedEventArgs e) =>
+        Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(BeginRename));
 
     private void BeginRename()
     {
