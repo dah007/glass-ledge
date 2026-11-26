@@ -28,8 +28,8 @@ right from the desktop instead of digging through File Explorer.
 
 ### 🗂️ Your folders, at a glance
 
-- **Live folder view** — every widget mirrors a real folder, with real shell icons and
-  thumbnails: app icons, image previews, the works.
+- **Live folder view** — every widget mirrors a real folder, with the same icons File
+  Explorer shows: app icons, file-type icons, folders.
 - **As many as you want** — pin any number of folders, each placed wherever you drag it.
 - **Four sizes** — Small (2 × 2), Medium (4 × 2), Large (4 × 4) or Extra large (5 × 5), per widget.
 - **Never truncated silently** — when a folder holds more than fits, a **+N More** tile
@@ -43,6 +43,10 @@ right from the desktop instead of digging through File Explorer.
 - **Lives on the desktop layer** — above the wallpaper, below your app windows. Pin any widget
   **Always on top** when you want it above your apps instead.
 - **You choose what's in front** — bring a widget to the front or send it to the back when widgets overlap.
+
+<p align="center">
+  <img src="screenshots/layer-menu.png" alt="A widget's right-click menu with the Layer submenu open: Bring to front, Bring forward, Send backward, Send to back, and Always on top ticked" height="420">
+</p>
 - **Survives Show desktop** — widgets stay put when you press **Win+D**.
 - **Out of the taskbar and Alt+Tab** — no clutter where you switch apps.
 - **Matches Windows** — the glass follows your light or dark theme.
@@ -61,7 +65,7 @@ right from the desktop instead of digging through File Explorer.
   get a little more opaque so the text never sinks into the background.
 
 <p align="center">
-  <img src="screenshots/folder-right-click.png" alt="A widget's right-click menu: Refresh, Expand, Open in File Explorer, Change folder, Rename, Color, Size, Add widget, Remove widget, About, Exit" height="420">
+  <img src="screenshots/folder-right-click.png" alt="A widget's right-click menu: Refresh, Collapse, Open in File Explorer, Change folder, Rename, Color, Glossy, Size, Layer, Add widget, Add plugin widget, Remove widget, Preferences, About, Exit" height="420">
   &nbsp;&nbsp;
   <img src="screenshots/colorpicker.png" alt="Widget color dialog with a saturation/brightness square, hue and opacity sliders, a preview swatch, hex field and presets" height="420">
 </p>
@@ -72,7 +76,7 @@ right from the desktop instead of digging through File Explorer.
   everything at once; right-click for the full menu.
 - **Remembers everything** — folder, position, size, collapsed state, name and color all
   come back on the next launch.
-- **Starts with Windows** — optional, chosen during install.
+- **Starts with Windows** — optional, chosen during install or later in **Preferences**.
 - **Never doubled up** — launching it again while it's running won't duplicate your widgets.
 - **Extend it with plugins** — add widgets that aren't folders, like the built-in **Search box**
   (see [Plugins](#plugins)).
@@ -81,6 +85,8 @@ right from the desktop instead of digging through File Explorer.
   <img src="screenshots/trayicon.png" alt="The GlassLedge tray icon with its tooltip" height="90">
   &nbsp;&nbsp;
   <img src="screenshots/tray-menu.png" alt="Tray menu with Add widget, Close widget, Hide all, Show all, About and Exit" height="265">
+  &nbsp;&nbsp;
+  <img src="screenshots/preferences.png" alt="Preferences window with switches for Start with Windows, Open folders in a pane, and Allow plugins, and a warning that plugins can run code on your PC" height="265">
 </p>
 
 ## Install
@@ -149,6 +155,10 @@ In the color picker, Tab to the square or a bar and use the arrow keys (Shift or
 ## Plugins
 
 GlassLedge can show plugin widgets: GlassLedge draws the glass, the plugin supplies what is inside. The first plugin is the **Search box**, and it is also the worked example for writing your own.
+
+<p align="center">
+  <img src="screenshots/search-box.png" alt="The Search box plugin widget: a glass bar with a Search the web text box and a Search button" width="424">
+</p>
 
 - **Use them:** Preferences > **Allow plugins** (off by default; a plugin is a program, so only add ones you trust), then **Add plugin widget**.
 - **Where they live:** every plugin is in [`plugins/<plugin-name>`](plugins/README.md) in this repository, ships to `plugins\` beside the app, and your own go in `%APPDATA%\GlassLedge\plugins`.
