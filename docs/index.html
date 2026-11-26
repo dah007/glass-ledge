@@ -40,7 +40,7 @@
       <p class="fine">Free and open source. Installs for your user only, no admin prompt.</p>
     </div>
     <div class="shot">
-      <img src="assets/4-windows.png" alt="Four GlassLedge widgets on a Windows desktop: Downloads and another small widget with +N overflow tiles, a large Games widget full of app icons, and a collapsed Documents widget" width="1200" height="675">
+      <img src="assets/4-windows.png" alt="GlassLedge widgets on a Windows desktop: a collapsed purple Downloads widget, a green Projects widget of folders, a Search box plugin widget, a large Games widget full of game icons, and a pink Art widget with a +14 overflow tile layered in front of Games" width="1154" height="606">
     </div>
   </div>
 </div>
@@ -48,12 +48,14 @@
 <section id="features">
   <div class="wrap">
     <h2>A folder that stays where you put it.</h2>
-    <p class="sub">Each widget mirrors a real folder with real icons and thumbnails. Drag it anywhere; it remembers.</p>
+    <p class="sub">Each widget mirrors a real folder with the same icons File Explorer shows. Drag it anywhere; it remembers.</p>
     <div class="cards">
-      <div class="card"><div class="tile">🗂️</div><h3>Live folder view</h3><p>Real shell icons and image previews, in four sizes from 2×2 up to 5×5. Overflow becomes a <strong>+N</strong> tile that opens the folder.</p></div>
+      <div class="card"><div class="tile">🗂️</div><h3>Live folder view</h3><p>App icons, file icons and folders, in four sizes from 2×2 up to 5×5. Overflow becomes a <strong>+N</strong> tile that opens the folder. Turn on the folder pane to browse subfolders right inside GlassLedge.</p></div>
       <div class="card"><div class="tile">🖥️</div><h3>Part of the desktop</h3><p>Above the wallpaper, below your apps. Widgets survive <strong>Win+D</strong> and stay out of the taskbar and Alt+Tab.</p></div>
+      <div class="card"><div class="tile">📚</div><h3>Layers and Always on top <span class="badge">New</span></h3><p>When widgets overlap, bring one to the front or send it to the back. Pin a widget <strong>Always on top</strong> to keep it above your apps too.</p></div>
+      <div class="card"><div class="tile">🔎</div><h3>Plugin widgets <span class="badge">New</span></h3><p>Widgets beyond folders. The first is a <strong>Search box</strong> that searches the web from your desktop. Plugins are off until you turn them on.</p></div>
       <div class="card"><div class="tile">🌗</div><h3>Matches Windows</h3><p>Glass that follows your light or dark theme, live, with a real blur of what's behind it.</p></div>
-      <div class="card"><div class="tile">📍</div><h3>Remembers everything</h3><p>Folder, position, size, name and color come back on the next launch. Drag to move; it saves when you let go.</p></div>
+      <div class="card"><div class="tile">📍</div><h3>Remembers everything</h3><p>Folder, position, size, name, color and stacking order come back on the next launch. Drag to move; it saves when you let go.</p></div>
     </div>
   </div>
 </section>
@@ -67,11 +69,13 @@
         <li>Tint the glass any color, with a full picker, opacity slider and hex entry</li>
         <li>Optional glossy highlights, per widget</li>
         <li>Collapse a widget down to its title with a double-click</li>
-        <li>Everything lives in the right-click menu</li>
+        <li>Choose which widget is in front, or keep one always on top</li>
+        <li>Start with Windows, the folder pane and plugins are in <strong>Preferences</strong></li>
+        <li>Everything lives in the right-click menu, and works from the keyboard too</li>
       </ul>
     </div>
     <div class="pics">
-      <img src="assets/folder-right-click.png" alt="A widget's right-click menu with Refresh, Collapse, Open in File Explorer, Change folder, Rename, Color, Size and more" loading="lazy">
+      <img src="assets/layer-menu.png" alt="A widget's right-click menu with the Layer submenu open: Bring to front, Bring forward, Send backward, Send to back, and Always on top ticked" loading="lazy">
       <img src="assets/colorpicker.png" alt="The widget color dialog with a saturation square, hue and opacity sliders, hex field and presets" loading="lazy">
     </div>
   </div>
@@ -83,7 +87,7 @@
     <p class="sub">GlassLedge is Apache 2.0 licensed and built in the open. Read it, fork it, send a pull request.</p>
     <div class="cards">
       <div class="card"><div class="tile">⚙️</div><h3>Modern .NET</h3><p>WPF on .NET 10, with a tested core library and CI on every push.</p></div>
-      <div class="card"><div class="tile">🧩</div><h3>Plugins <span class="badge">In development</span></h3><p>Widgets beyond folders: a search box, a clock, weather. A plugin supplies the body and the app supplies the glass. The design is on GitHub.</p></div>
+      <div class="card"><div class="tile">🧩</div><h3>Write a plugin</h3><p>A plugin supplies what's inside a widget; GlassLedge supplies the glass. The Search box is the worked example, and the <a href="https://github.com/dah007/glass-ledge/blob/main/docs/plugins/README.md">plugin guide</a> walks you through your own.</p></div>
       <div class="card"><div class="tile">☕</div><h3>Made by one person</h3><p>If it earns a spot on your desktop, you can <a href="https://buymeacoffee.com/dah007">buy the author a coffee</a>.</p></div>
     </div>
   </div>
