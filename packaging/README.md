@@ -25,7 +25,9 @@ the Microsoft Store (`build\build-msix.ps1`). They are built from the same code 
    It prints the two commands to trust the test certificate and install the package. Then run the checklist below.
 4. **Upload.** The file for the Store is the **unsigned** `artifacts\msix\GlassLedge-<version>.0-x64.msix` (the Store signs it).
    Never upload a file with `-DEV` or `test-signed` in its name.
-5. **Fill in the listing, privacy URL, age rating and pricing** from the project's Store listing notes, then submit.
+5. **Fill in the listing, privacy URL, age rating and pricing** from the project's Store listing notes. Mention plugin
+   support in the description (for example "Supports plugin widgets; includes a Search box"), and paste the
+   [notes for certification](#notes-for-certification) below into **Submission options > Notes for certification**. Then submit.
 
 Every later release needs a higher version: change `<Version>` in `Directory.Build.props`, rebuild, upload as a new submission.
 The package version is the app version plus `.0`; the Store reserves the last number.
@@ -41,3 +43,43 @@ The package runs the same app, but Windows gives packaged apps a private view of
 - [ ] **Win+D** (Show desktop) keeps the widgets.
 - [ ] **Uninstall** from Settings removes the app and its tray icon.
 - [ ] With the installer version also installed, launching the second copy does not duplicate widgets (single-instance guard).
+
+### Plugins
+
+- [ ] **Off by default:** on a clean install, **Add plugin widget** offers only **Turn on plugins in Preferences…** until
+  **Preferences… > Allow plugins** is on.
+- [ ] **Bundled plugin:** with plugins allowed, **Add plugin widget > Search box** adds the widget, and a search opens in the
+  default browser. (This checks that the package includes `plugins\search-box`.)
+- [ ] **Your own plugins folder:** create `%APPDATA%\GlassLedge\plugins` in File Explorer (the app doesn't create it), copy a
+  plugin folder into it (a copy of `plugins\search-box` with a different `id` will do), and restart the app. Does it appear in **Add plugin widget**?
+  Packaged apps see a virtualized AppData, so this is the other thing I could not predict. If it doesn't appear, exclude
+  `GlassLedge\plugins` from virtualization in the manifest
+  ([flexible virtualization](https://learn.microsoft.com/windows/msix/desktop/flexible-virtualization)), or say in the listing that
+  the Store version runs only the bundled plugins.
+- [ ] **Turning it off:** turning **Allow plugins** off again closes the plugin widgets straight away, and after a restart they
+  don't come back. (A plugin that was already loaded stays in memory until the app exits; it just has no widgets.)
+
+## Notes for certification
+
+Store policy 10.2.2 limits code that an app loads while it runs and that changes what the app was described as doing. Plugins are
+that kind of code, so tell the reviewers how they work. Paste this into **Notes for certification** (edit it if the plugin
+features change):
+
+```text
+GlassLedge shows folders from the user's PC as widgets on the Windows desktop.
+
+Plugin widgets (optional, OFF by default)
+- GlassLedge can also show "plugin widgets". The package includes one plugin, the Search box, in the app's
+  plugins\search-box folder. It is part of this submission.
+- To try it: right-click the GlassLedge tray icon (or any widget) > Preferences... > turn on "Allow plugins" > OK.
+  Then right-click > Add plugin widget > Search box. Type a search and press Enter; it opens in the default browser.
+- The Preferences window warns that plugins can run code on the PC and should only be turned on for plugins
+  the user trusts. Turning "Allow plugins" off closes all plugin widgets.
+- GlassLedge never downloads plugins or any other code. It only loads plugins included in the package, or ones
+  the user has copied into %APPDATA%\GlassLedge\plugins themselves.
+- GlassLedge does not collect or send any data. The Search box only opens the user's browser with the search
+  terms; the browser sends them to the search engine.
+
+First run: the app asks for a folder to show in the first widget. Any folder works, for example Documents.
+The app runs from the notification area (tray). Right-click the tray icon for all options, including Exit.
+```
