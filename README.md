@@ -3,7 +3,7 @@
 **Your favorite folders, always on your desktop.** iOS-style folder widgets for Windows 11.
 
 <p align="center">
-  <img src="screenshots/4-windows.png" alt="Four widgets on the desktop: small Downloads and dah.art widgets with +N overflow tiles, a large Games widget full of app icons, and a collapsed Documents widget" width="790">
+  <img src="screenshots/4-windows.png" alt="Four widgets on the desktop: a blue-tinted Artwork widget full of images, a translucent Apps widget of app icons with a +4 overflow tile, a collapsed Downloads widget, and a Projects widget layered in front of Artwork" width="790">
 </p>
 
 I've always wanted a quick-access folder that's always there, in the same spot on my
