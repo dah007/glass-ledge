@@ -1,0 +1,17 @@
+// Cloudflare Workers config for the GlassLedge website (https://glass-ledge.dholmberg.workers.dev/).
+// The site is the static files in docs/; there is no Worker script.
+// Cloudflare Workers Builds deploys main with `npx wrangler deploy` and other branches with `npx wrangler preview`.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+
+  // Must match the Worker's name in the Cloudflare dashboard.
+  "name": "glass-ledge",
+  "compatibility_date": "2026-11-01",
+
+  "assets": {
+    "directory": "./docs"
+  },
+
+  // Required by `wrangler preview` (non-production branch builds). Empty means: same settings as above.
+  "previews": {}
+}
