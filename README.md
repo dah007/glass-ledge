@@ -12,6 +12,18 @@ glossy glass card showing the contents of a folder you choose as a grid of icons
 Games, your Downloads, that project folder you open twenty times a day, and glance at it
 right from the desktop instead of digging through File Explorer.
 
+## What's new in 0.7.0
+
+- **Layering** — right-click > **Layer** to bring a widget to the front, send it to the back, or step it one
+  place forward or backward when widgets overlap.
+- **Always on top** — pin a widget above every window, apps included, from the same **Layer** menu.
+- **Plugins** — widgets beyond folders, starting with a **Search box**. Off by default; turn on
+  **Preferences… > Allow plugins**.
+- **Preferences window** — start with Windows, allow plugins, and open folders in a pane right inside the
+  widget instead of File Explorer.
+- **Better keyboard and screen reader support** — **Go to widget** from the tray, arrow-key navigation, and
+  High Contrast support.
+
 ## Features
 
 ### 🗂️ Your folders, at a glance
@@ -24,10 +36,13 @@ right from the desktop instead of digging through File Explorer.
   opens it in File Explorer.
 - **Collapsible** — fold a widget down to just its title and item count when you don't
   need the contents.
+- **Browse in place** — optionally open subfolders in a pane inside the widget, with Back and Up.
 
 ### 🖥️ Part of the desktop, not in your way
 
-- **Lives on the desktop layer** — above the wallpaper, below your app windows.
+- **Lives on the desktop layer** — above the wallpaper, below your app windows. Pin any widget
+  **Always on top** when you want it above your apps instead.
+- **You choose what's in front** — bring a widget to the front or send it to the back when widgets overlap.
 - **Survives Show desktop** — widgets stay put when you press **Win+D**.
 - **Out of the taskbar and Alt+Tab** — no clutter where you switch apps.
 - **Matches Windows** — the glass follows your light or dark theme.
@@ -59,6 +74,8 @@ right from the desktop instead of digging through File Explorer.
   come back on the next launch.
 - **Starts with Windows** — optional, chosen during install.
 - **Never doubled up** — launching it again while it's running won't duplicate your widgets.
+- **Extend it with plugins** — add widgets that aren't folders, like the built-in **Search box**
+  (see [Plugins](#plugins)).
 
 <p align="center">
   <img src="screenshots/trayicon.png" alt="The GlassLedge tray icon with its tooltip" height="90">
@@ -69,7 +86,7 @@ right from the desktop instead of digging through File Explorer.
 ## Install
 
 Download `GlassLedge-Setup-<version>.exe` from the
-[Releases page](https://github.com/dah007/glass-ledge/releases) and run it.
+[latest release](https://github.com/dah007/glass-ledge/releases/latest) and run it.
 
 - Installs for the current user only — no admin prompt.
 - Bundles the .NET runtime; nothing else to install.
@@ -140,7 +157,7 @@ GlassLedge can show plugin widgets: GlassLedge draws the glass, the plugin suppl
 ## Settings
 
 Saved as JSON at `%APPDATA%\GlassLedge\settings.json`: one entry per widget
-with its folder, position, size, collapsed state, custom name, color and glossy setting, one entry per plugin widget (plugin, position, color, glossy), the Preferences choices, the front-to-back order of the widgets, plus whether
+with its folder, position, size, collapsed state, custom name, color, glossy and always-on-top settings, one entry per plugin widget (plugin, position, color, glossy, always on top), the Preferences choices, the front-to-back order of the widgets, plus whether
 widgets are currently hidden. Uninstalling keeps this file.
 
 ## Development Guide
