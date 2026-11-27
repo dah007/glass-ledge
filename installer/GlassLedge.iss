@@ -56,10 +56,6 @@ RestartApplications=no
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
-[Tasks]
-; Checked by default.
-Name: "startup"; Description: "Start {#AppName} when I sign in to Windows"; GroupDescription: "Startup:"
-
 [Files]
 Source: "{#PublishDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
@@ -75,7 +71,7 @@ Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppExeName}"
 ; The old name's startup entry would point at a file that no longer exists, so remove it.
 Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: none; ValueName: "FloatingWindowOrganizer"; Flags: deletevalue
 ; Per-user "Run" entry; also listed (and switchable) in Settings > Apps > Startup.
-Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "GlassLedge"; ValueData: """{app}\{#AppExeName}"""; Flags: uninsdeletevalue; Tasks: startup
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "GlassLedge"; ValueData: """{app}\{#AppExeName}"""; Flags: uninsdeletevalue; Check: StartWithWindows
 
 [Run]
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
@@ -87,6 +83,92 @@ Filename: "{sys}\taskkill.exe"; Parameters: "/im {#AppExeName} /f"; Flags: runhi
 ; Widget settings in %APPDATA%\GlassLedge are kept on uninstall so a reinstall restores them.
 
 [Code]
+// ---- Look: follows the Preferences window (Segoe UI Variable, semibold 14 px titles, 12.5 px secondary
+// text, a rounded-looking row with an icon tile). Colours are the light brand palette, as Inno BGR values.
+const
+  ColorText = $1E1C1C;          // Graphite
+  ColorSecondary = $5C5552;     // brand secondary text
+  ColorFocus = $00538A;         // deep amber
+  ColorCard = $F7F5F4;          // faint tile on the white page
+  ColorTile = $E9E5E2;          // icon tile
+
+var
+  StartCheck: TNewCheckBox;
+
+// "Start with Windows" row on its own page. Silent installs can pass /StartWithWindows=0 to leave it off.
+function StartWithWindows: Boolean;
+begin
+  Result := (StartCheck = nil) or StartCheck.Checked;
+end;
+
+procedure UseFont(Control: TNewStaticText; const Name: String; Size: Integer; Color: TColor);
+begin
+  Control.Font.Name := Name;
+  Control.Font.Size := Size;
+  Control.Font.Style := [];
+  Control.Font.Color := Color;
+end;
+
+procedure InitializeWizard;
+var
+  Page: TWizardPage;
+  Card, Tile: TPanel;
+  Glyph, Detail: TNewStaticText;
+begin
+  // Typography. Only names, styles and colours change; sizes stay so Inno's own layout still fits.
+  WizardForm.Font.Name := 'Segoe UI Variable Text';
+  WizardForm.PageNameLabel.Font.Name := 'Segoe UI Semibold';
+  WizardForm.PageNameLabel.Font.Style := [];
+  WizardForm.PageNameLabel.Font.Color := ColorText;
+  WizardForm.PageDescriptionLabel.Font.Color := ColorSecondary;
+  WizardForm.WelcomeLabel1.Font.Name := 'Segoe UI Semibold';
+  WizardForm.WelcomeLabel1.Font.Style := [];
+  WizardForm.FinishedHeadingLabel.Font.Name := 'Segoe UI Semibold';
+  WizardForm.FinishedHeadingLabel.Font.Style := [];
+
+  // Startup option, laid out like a Preferences row: icon tile, title, then detail text beneath.
+  Page := CreateCustomPage(wpSelectDir, 'Startup', 'Choose whether GlassLedge opens when you sign in.');
+
+  Card := TPanel.Create(Page);
+  Card.Parent := Page.Surface;
+  Card.SetBounds(0, 0, Page.SurfaceWidth, ScaleY(72));
+  Card.BevelOuter := bvNone;
+  Card.ParentBackground := False;
+  Card.Color := ColorCard;
+
+  Tile := TPanel.Create(Page);
+  Tile.Parent := Card;
+  Tile.SetBounds(ScaleX(14), ScaleY(18), ScaleX(36), ScaleY(36));
+  Tile.BevelOuter := bvNone;
+  Tile.ParentBackground := False;
+  Tile.Color := ColorTile;
+
+  // The same power icon as Preferences, from the Windows icon font.
+  Glyph := TNewStaticText.Create(Page);
+  Glyph.Parent := Tile;
+  Glyph.Caption := #$E7E8;
+  UseFont(Glyph, 'Segoe Fluent Icons', 12, ColorFocus);
+  Glyph.Left := (Tile.Width - Glyph.Width) div 2;
+  Glyph.Top := (Tile.Height - Glyph.Height) div 2;
+
+  StartCheck := TNewCheckBox.Create(Page);
+  StartCheck.Parent := Card;
+  StartCheck.SetBounds(ScaleX(64), ScaleY(12), Card.Width - ScaleX(78), ScaleY(22));
+  StartCheck.Caption := 'Start with Windows';
+  StartCheck.Font.Name := 'Segoe UI Semibold';
+  StartCheck.Font.Size := 10;
+  StartCheck.Font.Color := ColorText;
+  StartCheck.Checked := ExpandConstant('{param:StartWithWindows|1}') <> '0';
+
+  Detail := TNewStaticText.Create(Page);
+  Detail.Parent := Card;
+  Detail.AutoSize := False;
+  Detail.WordWrap := True;
+  Detail.SetBounds(ScaleX(64) + ScaleX(20), ScaleY(36), Card.Width - ScaleX(64) - ScaleX(34), ScaleY(32));
+  Detail.Caption := 'Open GlassLedge in the tray when you sign in to Windows.';
+  UseFont(Detail, 'Segoe UI Variable Text', 9, ColorSecondary);
+end;
+
 // An old (pre-rename) copy keeps running under its old file name, which the installer would not otherwise close.
 procedure CurStepChanged(CurStep: TSetupStep);
 var
