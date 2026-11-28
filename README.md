@@ -3,7 +3,7 @@
 **Your favorite folders, always on your desktop.** iOS-style folder widgets for Windows 11.
 
 <p align="center">
-  <img src="screenshots/4-windows.png" alt="GlassLedge widgets on the desktop: a collapsed purple Downloads widget, a green Projects widget of folders, a Search box plugin widget, a large Games widget full of game icons, and a pink Art widget with a +14 overflow tile layered in front of Games" width="790">
+  <img src="screenshots/4-windows.png" alt="GlassLedge widgets on the desktop: a collapsed purple Downloads widget, a green Projects widget of folders, a Search box plugin widget, a large Apps widget full of Windows app icons, and a pink Art widget with a +14 overflow tile layered in front of Apps" width="790">
 </p>
 
 I've always wanted a quick-access folder that's always there, in the same spot on my
@@ -93,6 +93,10 @@ right from the desktop instead of digging through File Explorer.
 
 Download `GlassLedge-Setup-<version>.exe` from the
 [latest release](https://github.com/dah007/glass-ledge/releases/latest) and run it.
+
+<p align="center">
+  <img src="screenshots/installer-startup.png" alt="The GlassLedge 0.8.0 installer's Startup page, with a Start with Windows option and the note: Open GlassLedge in the tray when you sign in to Windows" width="560">
+</p>
 
 - Installs for the current user only — no admin prompt.
 - Bundles the .NET runtime; nothing else to install.
