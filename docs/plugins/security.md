@@ -9,7 +9,7 @@ That is why plugins are **off by default** and why the switch lives in Preferenc
 - **Allow plugins is off until you turn it on.** While it's off, no plugin code is loaded or run. GlassLedge still reads each plugin's small `plugin.json` to list what's installed, but nothing in it is executed.
 - **Turning it off takes effect at once.** Plugin widgets close; their saved positions and colours are kept.
 - **Discovery is limited to two folders:** `plugins\` beside the app, and `%APPDATA%\GlassLedge\plugins`. Nothing is fetched from the internet. There is no install-from-URL.
-- **The app's own plugins can't be silently replaced.** If a plugin in your own folder has the same id as one shipped with the app, the shipped one is used and the other is reported.
+- **The app's own plugins can't be silently replaced.** If a plugin in your own folder has the same id as one shipped with the app, the shipped one is used and yours is skipped.
 - **A failing plugin can't take GlassLedge down.** Errors when a plugin starts are caught and shown as a notice.
 - **`TryOpenUri` is limited to `http` and `https`**, so a well-behaved plugin has a safe way to open a link without starting a program.
 

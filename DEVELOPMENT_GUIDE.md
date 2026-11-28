@@ -19,7 +19,7 @@
 | `plugins/<name>` | `net10.0-windows` | One folder per plugin. `search-box` is the reference example. Built and staged by the app build |
 | `tests/GlassLedge.Tests` | `net10.0` (xUnit) | Unit tests for Core |
 | `tests/GlassLedge.Plugins.Tests` | `net10.0-windows` (xUnit) | Tests for the plugins in `./plugins`, using a fake widget context |
-| `tests/GlassLedge.AppTests` | `net10.0-windows` (xUnit) | Unit tests for App-layer pure logic (`WidgetTheme`) |
+| `tests/GlassLedge.AppTests` | `net10.0-windows` (xUnit) | Unit tests for App-layer logic: widget and brand themes (including accessibility), color presets, the color picker's areas, tile view models, and the plugin host |
 | `tests/GlassLedge.TestSupport` | `net10.0` | Shared helpers for Smoke/E2E: launching an isolated app instance, locating the built exe |
 | `tests/GlassLedge.Smoke` | `net10.0` (xUnit) | Launches the real built app; checks it starts/exits without crashing |
 | `tests/GlassLedge.E2E` | `net10.0-windows` (xUnit, FlaUI) | Drives the real widget window and color picker via UI Automation |
@@ -49,8 +49,9 @@ touch your real `%APPDATA%\GlassLedge\settings.json` or collide with an instance
 the app you already have running. Both are no-ops for a normal launch.
 
 E2E automates the widget window and color picker directly. Because widgets are desktop-owned
-tool windows, the process never has a "main window" in the Win32 sense, so the tests locate the
-widget by searching the desktop's top-level UI Automation children for the app's process ID.
+tool windows, the process never has a "main window" in the Win32 sense, and where UI Automation
+places them in its tree varies by machine. So the tests find the app's windows with `EnumWindows`
+(by process ID) and wrap each handle with UI Automation.
 Driving the system tray's notification-area menu is intentionally out of scope (too
 inconsistent across machines/CI runners to automate reliably), as is the native folder-picker
 dialog used by "Add widget" and "Change folder".
@@ -59,17 +60,18 @@ dialog used by "Add widget" and "Change folder".
 
 `.github/workflows/ci.yml` runs on every push to `main` and every pull request, with three
 parallel jobs on `windows-latest`: unit tests, smoke tests, and E2E tests. Each uploads its
-TRX results as a build artifact.
+TRX results as a build artifact. UI timing on shared runners varies, so the E2E step is retried
+up to three times; a test that fails every time still fails the check.
 
 ## Building the installer
 
 ```powershell
 .\build\build-installer.ps1                  # version from Directory.Build.props
 .\build\build-installer.ps1 -Version 0.2.0   # override the version
-.\build\build-installer.ps1 -SkipTests       # skip the unit-test step
+.\build\build-installer.ps1 -SkipTests       # skip the test step
 ```
 
-The script runs the unit tests, publishes a self-contained `win-x64` build to
+The script runs the Core unit tests (`tests\GlassLedge.Tests`, Release), publishes a self-contained `win-x64` build to
 `artifacts\publish\win-x64`, then compiles `installer\GlassLedge.iss`.
 Output: `artifacts\installer\GlassLedge-Setup-<version>.exe`.
 
@@ -77,8 +79,9 @@ The version lives in one place: `<Version>` in `Directory.Build.props`.
 
 ## Building the Microsoft Store package
 
-`build\build-msix.ps1` builds the MSIX package for the Store (needs the Windows 10/11 SDK). With the Store identity still a
-placeholder it makes a self-signed `-DEV` package you can install locally. The manifest, logos and the step-by-step publishing
+`build\build-msix.ps1` builds the MSIX package for the Store (needs the Windows 10/11 SDK), using the identity in
+`packaging\msix\store-identity.json`. The output is the unsigned package to upload; add `-TestSign` for a self-signed copy you
+can install locally. (While the identity still holds placeholders, it builds only a self-signed `-DEV` package.) The manifest, logos and the step-by-step publishing
 notes are in [`packaging/`](packaging/README.md). `MsixPackagingTests` checks the manifest template and logos on every test run.
 
 ## Releasing

@@ -3,7 +3,7 @@
 **Your favorite folders, always on your desktop.** iOS-style folder widgets for Windows 11.
 
 <p align="center">
-  <img src="screenshots/4-windows.png" alt="GlassLedge widgets on the desktop: a collapsed purple Downloads widget, a green Projects widget of folders, a Search box plugin widget, a large Games widget full of game icons, and a pink Art widget with a +14 overflow tile layered in front of Games" width="790">
+  <img src="screenshots/4-windows.png" alt="GlassLedge widgets on the desktop: a collapsed purple Downloads widget, a green Projects widget of folders, a Search box plugin widget, a large Apps widget full of Windows app icons, and a pink Art widget with a +14 overflow tile layered in front of Apps" width="790">
 </p>
 
 I've always wanted a quick-access folder that's always there, in the same spot on my
@@ -33,7 +33,7 @@ right from the desktop instead of digging through File Explorer.
 - **As many as you want** — pin any number of folders, each placed wherever you drag it.
 - **Four sizes** — Small (2 × 2), Medium (4 × 2), Large (4 × 4) or Extra large (5 × 5), per widget.
 - **Never truncated silently** — when a folder holds more than fits, a **+N More** tile
-  opens it in File Explorer.
+  opens the whole folder (in File Explorer, or in GlassLedge's pane if you've turned that on).
 - **Collapsible** — fold a widget down to just its title and item count when you don't
   need the contents.
 - **Browse in place** — optionally open subfolders in a pane inside the widget, with Back and Up.
@@ -43,13 +43,13 @@ right from the desktop instead of digging through File Explorer.
 - **Lives on the desktop layer** — above the wallpaper, below your app windows. Pin any widget
   **Always on top** when you want it above your apps instead.
 - **You choose what's in front** — bring a widget to the front or send it to the back when widgets overlap.
+- **Survives Show desktop** — widgets stay put when you press **Win+D**.
+- **Out of the taskbar and Alt+Tab** — no clutter where you switch apps.
+- **Matches Windows** — the glass follows your light or dark theme.
 
 <p align="center">
   <img src="screenshots/layer-menu.png" alt="A widget's right-click menu with the Layer submenu open: Bring to front, Bring forward, Send backward, Send to back, and Always on top ticked" height="420">
 </p>
-- **Survives Show desktop** — widgets stay put when you press **Win+D**.
-- **Out of the taskbar and Alt+Tab** — no clutter where you switch apps.
-- **Matches Windows** — the glass follows your light or dark theme.
 
 ### 🎨 Make each one yours
 
@@ -94,10 +94,14 @@ right from the desktop instead of digging through File Explorer.
 Download `GlassLedge-Setup-<version>.exe` from the
 [latest release](https://github.com/dah007/glass-ledge/releases/latest) and run it.
 
+<p align="center">
+  <img src="screenshots/installer-startup.png" alt="The GlassLedge 0.8.0 installer's Startup page, with a Start with Windows option and the note: Open GlassLedge in the tray when you sign in to Windows" width="560">
+</p>
+
 - Installs for the current user only — no admin prompt.
 - Bundles the .NET runtime; nothing else to install.
 - Adds a Start menu shortcut and optionally starts the app when you sign in (toggle it later in **Settings > Apps > Startup**).
-- Upgrading over an existing install closes the running copy first and restarts it after.
+- Upgrading over an existing install closes the running copy first; the installer's last page offers to start it again.
 - Uninstalling stops the app but keeps your settings, so reinstalling restores your widgets.
 
 On first run you're asked to pick a folder for your first widget.
@@ -113,7 +117,7 @@ copied over automatically on first launch (the old settings folder is left untou
 | Move a widget | Drag anywhere on it. Its position is saved when you let go. |
 | Choose which widget is on top when they overlap | Right-click a widget > **Layer** > **Bring to front**, **Bring forward**, **Send backward** or **Send to back**. Tick **Always on top** to keep a widget above every window, apps included (pinned widgets stack among themselves with the same items). Forward and backward step past the nearest widget it overlaps, so each use changes what you see; items that wouldn't change anything are greyed out. The order is remembered, and it works for plugin widgets too |
 | Open a file or folder | Double-click its icon |
-| See items that don't fit | Double-click the **+N** tile (opens the folder in File Explorer) |
+| See items that don't fit | Double-click the **+N** tile (opens the folder in File Explorer, or in GlassLedge's pane if **Open folders in a pane** is on) |
 | Collapse to just the title row, or expand again | Double-click the title row, or right-click > **Collapse** / **Expand** |
 | Re-read the folder after files change | Right-click > **Refresh** |
 | Rename a widget | Right-click > **Rename**, type, press Enter (Esc cancels). Clear the name to go back to the folder's name. |

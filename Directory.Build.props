@@ -7,7 +7,7 @@
 
   <!-- Single source of truth for the version. Release builds override it from the git tag (-p:Version=...). -->
   <PropertyGroup>
-    <Version>0.7.0</Version>
+    <Version>0.8.0</Version>
     <Product>GlassLedge</Product>
     <Company>dah007</Company>
     <Authors>dah007</Authors>
