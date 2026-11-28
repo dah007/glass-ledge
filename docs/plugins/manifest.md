@@ -28,7 +28,7 @@ Each plugin folder has a `plugin.json`. GlassLedge reads it **before** running a
 | `entryType` | yes | The full name (namespace and class) of the class in `entry` that implements `IWidgetPlugin`. It must have a public parameterless constructor. |
 | `size` | no | The widget's **contents** size in device-independent pixels, `{ "width": …, "height": … }`. Width 120 to 800, height 24 to 400. GlassLedge adds 24 pixels of glass on each axis. Default 320 x 40. |
 
-Every problem is reported at once, in plain words, in the tray notification and in [troubleshooting.md](troubleshooting.md)'s checklist. The rules live in code at `src/GlassLedge.Core/Services/PluginManifestReader.cs`, and `PluginManifestReaderTests` covers each one.
+GlassLedge checks every rule at once. A plugin that breaks any of them is skipped and doesn't appear in **Add plugin widget**; the app doesn't show the reason yet, so use [troubleshooting.md](troubleshooting.md)'s checklist to find it. The rules live in code at `src/GlassLedge.Core/Services/PluginManifestReader.cs`, and `PluginManifestReaderTests` covers each one.
 
 ## Versioning the contract
 

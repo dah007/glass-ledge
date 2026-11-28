@@ -35,10 +35,12 @@ If the plugin brought its own `GlassLedge.PluginApi.dll`, the app and the plugin
 ## Load order and lifetime
 
 1. Startup: discovery runs (reads manifests). If **Allow plugins** is on, saved plugin widgets are recreated.
-2. Preferences OK with the switch changed: discovery runs again and plugins start or stop immediately.
+2. Preferences OK with the switch changed: turning it on runs discovery again and starts plugins; turning it off stops them. Either way it happens immediately.
 3. A widget is removed, or plugins are switched off: the window closes and the plugin's `Closed` event fires.
-4. Assemblies stay loaded until the app exits (the load contexts aren't collectible), which is why updating a plugin needs a restart.
+4. Assemblies stay loaded until the app exits (the load contexts aren't collectible), and their files stay locked, which is why updating a plugin needs a restart.
+
+Discovery's problem list (`PluginManager.Problems`: why a folder was skipped) isn't shown anywhere in the app yet. Failures while a plugin *starts* are shown, as a tray notification.
 
 ## Not yet (planned, not built)
 
-Install-from-URL and a gallery, packaged `.fwoplugin` files, project templates and richer APIs (settings pages, per-widget saved data) are future phases.
+Install-from-URL and a gallery, single-file plugin packages, project templates and richer APIs (settings pages, per-widget saved data) are future phases.
